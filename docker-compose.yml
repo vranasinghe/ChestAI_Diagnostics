@@ -1,0 +1,31 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - postgres
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+
+  redis:
+    image: redis
+
+  celery:
+    build: ./backend
+    command: celery -A app.tasks worker --loglevel=info
+    depends_on:
+      - redis
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: xraydb
+    ports:
+      - "5432:5432"
