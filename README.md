@@ -75,19 +75,7 @@ Doctor uploads X-ray → FastAPI Backend → Binary Classification Model → Mul
 
 ## Project Structure
 
-XRAY-ML-system/
-├── backend/ # FastAPI backend
-├── frontend/ # React + Vite frontend
-├── ml/ # Machine learning scripts & models
-│ ├── binary/ # Binary classification model
-│ ├── disease_multilabel/ # Multi-class classification model
-│ ├── models/ # Model architectures
-│ └── utils/ # Metrics, losses, visualizations
-├── data/ # Dataset CSVs & PDFs (images ignored in Git)
-├── docker/ # Dockerfiles for backend, frontend, Celery
-├── scripts/ # Dataset preprocessing, evaluation
-├── docs/ # Architecture diagrams & project documentation
-└── .github/workflows/ # GitHub Actions CI/CD
+![Project Structure](docs/project_root.png)
 
 
 ---
