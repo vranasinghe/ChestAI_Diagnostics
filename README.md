@@ -75,7 +75,7 @@ Doctor uploads X-ray → FastAPI Backend → Binary Classification Model → Mul
 
 ## Project Structure
 
-![Project Structure](docs/project_root.png)
+![Project Structure](docs/Project_root.png)
 
 
 ---
