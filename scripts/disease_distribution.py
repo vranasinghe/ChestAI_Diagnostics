@@ -1,8 +1,9 @@
 import pandas as pd
 from collections import Counter
+from pathlib import Path
 
 #Loading the dataset
-df = pd.read_csv("data/Data_Entry_2017.csv")
+df = pd.read_csv("E:\Medicine\XRAY-decease-classification\XRAY-ML-system\data\Data_Entry_2017.csv")
 
 #Extracting disease labels column
 labels = df["Finding Labels"]
@@ -26,6 +27,6 @@ distribution_df = pd.DataFrame(
 print("\nDisease Distribution: \n")
 print(distribution_df)
 
-distribution_df.to_csv("data/disease_distribution.csv", index=False)
+distribution_df.to_csv("E:\Medicine\XRAY-decease-classification\XRAY-ML-system\data\Data_Entry_2017.csv", index=False)
 
 print("\nSaved distribution to data/disease_distribution.csv")
