@@ -49,6 +49,7 @@ frontend/dist/
 # NIH Chest X-ray images
 data/images_*/
 data/images/
+data/raw
 data/*.zip
 
 # Large dataset files (if ever downloaded again)
