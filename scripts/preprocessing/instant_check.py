@@ -1,31 +1,60 @@
 import pandas as pd
-from collections import Counter
 from pathlib import Path
 
-# Configuration
+# ==========================
+# PATH CONFIGURATION
+# ==========================
 
-BASE_PATH = Path(__file__).resolve().parents[2]
-DATA_CSV = BASE_PATH / "data" / "processed" / "(04)Data_with_External_Pneumonia.csv"
+BASE_PATH = Path(r"E:\Medicine\XRAY-decease-classification\XRAY-ML-system")
 
-# Load Dataset
+CSV_PATH = BASE_PATH / "data" / "processed" / "(08)Binary_balanced_deduplicated.csv"
+IMAGES_BASE = BASE_PATH / "data" / "raw"
 
-df = pd.read_csv(DATA_CSV)
+# ==========================
+# LOAD DATA
+# ==========================
 
-print(f"\nTotal Records: {len(df)}")
+df = pd.read_csv(CSV_PATH)
 
-# Count Multi-Label Diseases
+print("\n===== DATASET SUMMARY =====")
+print("Total Records:", len(df))
 
-disease_counter = Counter()
+# ==========================
+# BINARY LABEL DISTRIBUTION
+# ==========================
 
-for labels in df["Finding Labels"]:
-    diseases = labels.split("|")
-    for disease in diseases:
-        disease_counter[disease] += 1
+print("\n===== BINARY LABEL DISTRIBUTION =====")
+print(df["Binary_Label"].value_counts())
 
-# Print Results
+# ==========================
+# DUPLICATE CHECK
+# ==========================
 
-print("\nClass Distribution:\n")
-for disease, count in sorted(disease_counter.items(), key=lambda x: x[1], reverse=True):
-    print(f"{disease:20s} : {count}")
+duplicates = df[df.duplicated(subset=["Image Index"], keep=False)]
 
-print("\nTotal Unique Classes:", len(disease_counter))
+print("\n===== DUPLICATE IMAGE INDEX CHECK =====")
+print("Duplicate rows:", len(duplicates))
+
+# ==========================
+# MISSING IMAGE FILE CHECK
+# ==========================
+
+print("\n===== MISSING IMAGE FILE CHECK =====")
+
+missing_files = 0
+
+for image_name in df["Image Index"]:
+    found = False
+
+    for i in range(1, 13):
+        folder = IMAGES_BASE / f"images_{str(i).zfill(3)}" / image_name
+        if folder.exists():
+            found = True
+            break
+
+    if not found:
+        missing_files += 1
+
+print("Missing image files:", missing_files)
+
+print("\n===== CHECK COMPLETE =====")
