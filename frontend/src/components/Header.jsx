@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../App.css';
 
 const Header = () => {
@@ -18,8 +19,8 @@ const Header = () => {
         </nav>
 
         <div className="header-actions">
-          <button className="pill-btn btn-cyan">Register</button>
-          <button className="pill-btn btn-cyan">Log in</button>
+          <Link to="/register" className="pill-btn btn-cyan" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>Register</Link>
+          <Link to="/login" className="pill-btn btn-cyan" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>Log in</Link>
         </div>
       </div>
     </header>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../App.css';
 
 const Home = () => {
@@ -15,7 +16,7 @@ const Home = () => {
                     <p className="hero-subtitle">
                         In times like today, precision in diagnosis is very important, especially since the volume of imaging data is increasing day by day, so we are ready to help you with our advanced machine learning medical consultation.
                     </p>
-                    <button className="pill-btn btn-cyan">Try Free Trial</button>
+                    <Link to="/register" className="pill-btn btn-cyan" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: '2rem' }}>Get Started</Link>
 
                     <div className="hero-stats">
                         <div className="stat-item">
