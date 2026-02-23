@@ -983,3 +983,33 @@
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* ------------------------------------- */
+/* AUTH FEEDBACK BANNERS                 */
+/* ------------------------------------- */
+.auth-error-banner {
+  background: #fff5f5;
+  border: 1px solid #fc8181;
+  color: #c53030;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.auth-success-banner {
+  background: #f0fff4;
+  border: 1px solid #68d391;
+  color: #276749;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.auth-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
