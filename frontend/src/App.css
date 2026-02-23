@@ -1,42 +1,631 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+/* CSS Configuration for Template Redesign */
+
+/* ------------------------------------- */
+/* HEADER COMPONENT */
+/* ------------------------------------- */
+.header {
+  padding: 1.5rem 0;
+  background: transparent;
+  position: relative;
+  z-index: 100;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo-icon {
+  width: 16px;
+  height: 16px;
+  background-color: var(--brand-cyan);
+  border-radius: 4px 4px 50% 4px;
+  /* stylized plus/shield shape */
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo-icon::after {
+  content: '+';
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary-text);
+  letter-spacing: -0.5px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.nav-link {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--secondary-text);
+  transition: var(--transition-fast);
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary-text);
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+/* ------------------------------------- */
+/* HERO SECTION */
+/* ------------------------------------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+  min-height: 80vh;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+  position: relative;
+}
+
+.hero-content {
+  max-width: 500px;
+}
+
+.hero-title {
+  font-size: 3.8rem;
+  line-height: 1.2;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  max-width: 90%;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 2.5rem;
+  margin-top: 4rem;
+}
+
+.stat-item h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+}
+
+.stat-plus {
+  color: var(--brand-cyan);
+}
+
+.stat-item p {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.hero-visual {
+  position: relative;
+  height: 100%;
+  padding-left: 2rem;
+}
+
+/* Arch Shape Decorator in Background */
+.hero-bg-arch {
+  position: absolute;
+  top: 50px;
+  right: -50px;
+  width: 120%;
+  height: 90%;
+  background: #e2f2f5;
+  border-radius: 45% 45% 0 0 / 25% 25% 0 0;
+  z-index: -1;
+}
+
+.hero-arch-image {
+  width: 100%;
+  height: 600px;
+  object-fit: contain;
+  background-color: transparent;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-arch-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+/* ------------------------------------- */
+/* SERVICES CATEGORIES SECTION */
+/* ------------------------------------- */
+.services-section {
+  padding: 5rem 0;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.section-header {
+  margin-bottom: 4rem;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.section-header h2 {
+  font-size: 2.5rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.category-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+  text-align: left;
+}
+
+.category-card:hover {
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Middle cyan card style */
+.category-card.cyan-card {
+  background: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue));
+  color: white;
+}
+
+.cyan-card h3,
+.cyan-card p {
+  color: white;
+}
+
+.category-icon-wrapper {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #f8fbfc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 2rem auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.category-icon {
+  font-size: 3rem;
+}
+
+.category-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.category-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* ------------------------------------- */
+/* SPECIAL SERVICES SECTION */
+/* ------------------------------------- */
+.special-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  padding: 6rem 0;
+  align-items: center;
+}
+
+.special-visual {
+  position: relative;
+  padding-right: 2rem;
+}
+
+.special-arch {
+  width: 90%;
+  height: 550px;
+  background: linear-gradient(to bottom, var(--brand-cyan), var(--brand-blue));
+  margin: 0 auto;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 10px;
+}
+
+.special-arch.arch-shape {
+  /* We use global arch-shape class for the rounding */
+}
+
+.special-arch img {
+  max-width: 90%;
+  max-height: 95%;
+  object-fit: cover;
+  border-radius: inherit;
+  margin-bottom: -10px;
+  /* Slight overlap effect */
+}
+
+.special-content h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.special-content>p {
+  font-size: 1.1rem;
+  margin-bottom: 3rem;
+  line-height: 1.8;
+}
+
+.special-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+}
+
+.special-item-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--brand-cyan);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(38, 192, 205, 0.4);
+}
+
+.special-item h4 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.special-item p {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* ------------------------------------- */
+/* DOCTORS CAROUSEL SECTION */
+/* ------------------------------------- */
+.doctors-section {
+  padding: 5rem 0;
+  padding-bottom: 8rem;
+  /* Extra padding for floating cta */
+}
+
+.doctors-header {
+  margin-bottom: 4rem;
+}
+
+.doctors-header p.pre-title {
+  font-weight: 700;
+  color: var(--primary-text);
+  margin-bottom: 0.5rem;
+}
+
+.doctors-header h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.doctors-header p.subtitle {
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.doctors-layout {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 0;
+  align-items: center;
+}
+
+.doctor-info-card {
+  background: linear-gradient(135deg, var(--brand-cyan), var(--brand-blue));
+  color: white;
+  padding: 3.5rem 2.5rem;
+  border-radius: 24px;
+  z-index: 2;
+  position: relative;
+  margin-right: -50px;
+  /* Overlap effect */
+  box-shadow: var(--shadow-lg);
+}
+
+.doctor-info-card h4 {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.doctor-info-card h3 {
+  color: white;
+  font-size: 2.2rem;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.doctor-info-card a {
+  color: white;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.doctor-image-container {
+  background: #f0f7f9;
+  padding: 1.5rem;
+  padding-left: 4rem;
+  /* Compensate for overlap */
+}
+
+.doctor-image-container.arch-shape {
+  /* Using global arch shape */
+}
+
+.doctor-image-container img {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  border-radius: inherit;
+  filter: sepia(0.2) hue-rotate(180deg) saturate(0.8);
+  /* Temporary styling to mimic medical tint */
+}
+
+.carousel-nav {
+  position: absolute;
+  left: 3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  z-index: 3;
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--brand-cyan);
+  cursor: pointer;
+}
+
+.dot.active {
+  background: var(--brand-cyan);
+}
+
+.doctors-footer-action {
+  margin-top: -2rem;
+  /* Pull up towards the card */
+}
+
+/* ------------------------------------- */
+/* FOOTER & CTA SECTION */
+/* ------------------------------------- */
+.footer-wrapper {
+  position: relative;
+  background-color: var(--bg-color);
+  padding-top: 8rem;
+}
+
+.cta-box {
+  background: white;
+  border-radius: 24px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  max-width: 900px;
+  margin: 0 auto;
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  z-index: 10;
+}
+
+.cta-box h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta-box p {
+  max-width: 600px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.footer {
+  padding: 12rem 0 2rem;
+  border-top: none;
+  background: none;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: 3fr 7fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.footer-brand {
+  position: relative;
+}
+
+/* Light blue vertical pill accent */
+.footer-accent-pill {
+  position: absolute;
+  left: -2rem;
+  top: 0;
+  width: 24px;
+  height: 200px;
+  background: #e2f2f5;
+  border-radius: 12px;
+  z-index: -1;
+}
+
+.footer-description {
+  color: var(--secondary-text);
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1rem;
+}
+
+.social-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #e2f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--primary-text);
+  transition: var(--transition-fast);
+}
+
+.social-icon:hover {
+  background: var(--brand-cyan);
+  color: white;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.link-group h4 {
+  color: var(--primary-text);
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.link-group a {
+  display: block;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  transition: var(--transition-fast);
+}
+
+.link-group a:hover {
+  color: var(--brand-cyan);
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: none;
+  color: var(--primary-text);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+/* Responsive Overrides */
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding-bottom: 2rem;
   }
-  to {
-    transform: rotate(360deg);
+
+  .hero-content {
+    max-width: 100%;
+    margin: 0 auto;
   }
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+  .hero-stats {
+    justify-content: center;
   }
-}
 
-.card {
-  padding: 2em;
-}
+  .hero-bg-arch {
+    display: none;
+  }
 
-.read-the-docs {
-  color: #888;
+  .services-section .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .special-section {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .special-visual {
+    padding-right: 0;
+    order: -1;
+  }
+
+  .doctors-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-info-card {
+    margin-right: 0;
+    margin-bottom: -50px;
+  }
+
+  .doctor-image-container {
+    padding-left: 1.5rem;
+    padding-top: 4rem;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
