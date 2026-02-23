@@ -5,6 +5,7 @@ from app.db.session import get_db
 from app.models.doctor import Doctor
 from app.schemas.doctor import DoctorCreate, DoctorLogin, DoctorOut, Token
 from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import get_current_doctor
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -22,11 +23,11 @@ def register(payload: DoctorCreate, db: Session = Depends(get_db)):
     # 2. Hash the password
     hashed = hash_password(payload.password)
 
-    # 3. Create the doctor record (username placeholder for now)
+    # 3. Create the doctor record
     doctor = Doctor(
         first_name=payload.first_name,
         last_name=payload.last_name,
-        username="__temp__",       # will be updated after we have the ID
+        username="",  # Will be set after ID is generated
         email=payload.email,
         phone_no=payload.phone_no,
         qualification=payload.qualification,
@@ -70,3 +71,20 @@ def login(payload: DoctorLogin, db: Session = Depends(get_db)):
         token_type="bearer",
         doctor=DoctorOut.from_orm(doctor),
     )
+
+
+@router.delete("/delete_account", status_code=status.HTTP_200_OK)
+def delete_account(db: Session = Depends(get_db), current_doctor: Doctor = Depends(get_current_doctor)):
+    # Find and delete the current doctor's account
+    doctor = db.query(Doctor).filter(Doctor.id == current_doctor.id).first()
+    if not doctor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Doctor not found",
+        )
+    
+    # Delete the doctor record
+    db.delete(doctor)
+    db.commit()
+    
+    return {"detail": "Account deleted successfully"}

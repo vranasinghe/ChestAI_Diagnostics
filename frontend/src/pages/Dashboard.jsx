@@ -23,6 +23,10 @@ const Dashboard = () => {
         navigate('/login');
     };
 
+    const handleSettingsClick = () => {
+        navigate('/account-settings');
+    };
+
     if (!doctor) return null;
 
     return (
@@ -33,7 +37,7 @@ const Dashboard = () => {
 
                 <nav className="sidebar-nav">
                     <p className="sidebar-section-label">MENU</p>
-                    <a href="#" className="sidebar-link active">
+                    <a href="/dashboard" className="sidebar-link active">
                         <span className="sidebar-icon">▪</span> Dashboard
                     </a>
                     <a href="#" className="sidebar-link">
@@ -44,7 +48,10 @@ const Dashboard = () => {
                     </a>
 
                     <p className="sidebar-section-label">OTHERS</p>
-                    <a href="#" className="sidebar-link">
+                    <a href="#" className="sidebar-link" onClick={(e) => {
+                        e.preventDefault();
+                        handleSettingsClick();
+                    }}>
                         <span className="sidebar-icon">⚙</span> Settings
                     </a>
                     <a href="#" className="sidebar-link">
