@@ -15,19 +15,19 @@ const Home = () => {
                     <p className="hero-subtitle">
                         In times like today, precision in diagnosis is very important, especially since the volume of imaging data is increasing day by day, so we are ready to help you with our advanced machine learning medical consultation.
                     </p>
-                    <button className="pill-btn btn-cyan">Try Free Consultation</button>
+                    <button className="pill-btn btn-cyan">Try Free Trial</button>
 
                     <div className="hero-stats">
                         <div className="stat-item">
-                            <h3>200<span className="stat-plus">+</span></h3>
-                            <p>Active<br />Models</p>
+                            <h3>2<span className="stat-plus"></span></h3>
+                            <p>Active<br /> ML Models</p>
                         </div>
                         <div className="stat-item">
-                            <h3>15K<span className="stat-plus">+</span></h3>
+                            <h3>1000<span className="stat-plus">+</span></h3>
                             <p>Active<br />Scans</p>
                         </div>
                         <div className="stat-item">
-                            <h3>50<span className="stat-plus">+</span></h3>
+                            <h3>1<span className="stat-plus">+</span></h3>
                             <p>Medical<br />Partners</p>
                         </div>
                     </div>
@@ -36,7 +36,7 @@ const Home = () => {
                 <div className="hero-visual">
                     <div className="hero-bg-arch"></div>
                     {/* Using a placeholder visual that resembles the shape */}
-                    <div className="hero-arch-image arch-shape" style={{ background: 'url(https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80) no-repeat center bottom', backgroundSize: 'cover' }}>
+                    <div className="hero-arch-image arch-shape" style={{ background: 'url(https://plus.unsplash.com/premium_photo-1661665815817-1f8920d839f2?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) no-repeat center bottom', backgroundSize: 'cover' }}>
                         {/* The image is loaded from unspash as a placeholder for doctors */}
                     </div>
                 </div>
@@ -53,8 +53,8 @@ const Home = () => {
                         <div className="category-icon-wrapper">
                             <span className="category-icon">💬</span>
                         </div>
-                        <h3>Chat with AI</h3>
-                        <p>You can connect directly, quickly and easily, and there is no need to doubt the quality of the consultation and AI feedback offered.</p>
+                        <h3>Interact with the patient</h3>
+                        <p>Interact with the patient and get the proper diagnosis. You can send the medicle reports using the system</p>
                     </div>
 
                     <div className="category-card cyan-card">
@@ -62,7 +62,7 @@ const Home = () => {
                             <span className="category-icon" style={{ filter: 'contrast(0)' }}>🧬</span>
                         </div>
                         <h3>X-Ray Analysis</h3>
-                        <p>Upload the imaging data you are investigating and don't hesitate to ask about the proper diagnostic probability.</p>
+                        <p>Just upload an image of the XRAY. Heavily trained Machine Learning model will classify the XRAY and provide you with the proper diagnosis. </p>
                     </div>
 
                     <div className="category-card">
@@ -78,7 +78,7 @@ const Home = () => {
             {/* Special Services */}
             <section className="special-section container">
                 <div className="special-visual">
-                    <div className="special-arch arch-shape" style={{ background: 'url(https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80) no-repeat center bottom' }}>
+                    <div className="special-arch arch-shape" style={{ background: 'url(https://plus.unsplash.com/premium_photo-1680608979589-e9349ed066d5?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D) no-repeat center bottom 40%' }}>
                         {/* Placeholder doctor research image */}
                     </div>
                 </div>
@@ -91,14 +91,14 @@ const Home = () => {
 
                     <div className="special-grid">
                         <div className="special-item">
-                            <div className="special-item-icon">🧠</div>
-                            <h4>Brain MRI Analysis</h4>
-                            <p>Detect subtle anomalies in brain tissue with robust volumetric scanning AI models.</p>
+                            <div className="special-item-icon">0/1</div>
+                            <h4>Binary classification</h4>
+                            <p>Upload an image of your patient's XRAY. There is a binary classification model with high accuracy to detect whether there is a disease or not</p>
                         </div>
                         <div className="special-item">
                             <div className="special-item-icon">🫁</div>
-                            <h4>Chest X-Ray</h4>
-                            <p>Automated detection of pneumonia, pneumothorax, and cardiomegaly on standard PA films.</p>
+                            <h4>Multi-class classification</h4>
+                            <p>Automated detection of 12 diseases including pneumonia, pneumothorax, and cardiomegaly on standard PA films.</p>
                         </div>
                         <div className="special-item">
                             <div className="special-item-icon">🦴</div>
@@ -119,12 +119,12 @@ const Home = () => {
                 <div className="doctors-header">
                     <p className="pre-title">User Reviews</p>
                     <h2><span className="text-cyan">What doctors</span> Say about us</h2>
-                    <p className="subtitle">Handled directly by general engineers and professional and experienced machine learning specialists.</p>
+                    <p className="subtitle">Real-world feedback from doctors who actively use a machine-learning-powered web application in their clinical practice.</p>
                 </div>
 
                 <div className="doctors-layout">
                     <div className="doctor-info-card">
-                        <h4>Chief Data Scientist</h4>
+                        <h4>Cardiologist</h4>
                         <h3>Dr. James<br />Wellington</h3>
                         <a href="#readmore">Read More &rarr;</a>
                     </div>
