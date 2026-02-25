@@ -1,9 +1,58 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../components/AuthLayout';
-import { Eye } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
+
+const API_BASE = 'http://localhost:8000';
 
 const Register = () => {
+    const navigate = useNavigate();
+
+    const [form, setForm] = useState({
+        email: '',
+        first_name: '',
+        last_name: '',
+        phone_no: '',
+        qualification: '',
+        password: '',
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setError('');
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch(`${API_BASE}/auth/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(form),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                setError(data.detail || 'Registration failed. Please try again.');
+                return;
+            }
+
+            // Success — redirect to login
+            navigate('/login', { state: { registered: true } });
+        } catch (err) {
+            setError('Could not connect to the server. Make sure the backend is running.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <AuthLayout
             headerRightText="Already have an account? "
@@ -13,12 +62,21 @@ const Register = () => {
             <div className="auth-form-wrapper">
                 <h2 className="auth-title">Sign up</h2>
 
-                <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+                {error && (
+                    <div className="auth-error-banner">
+                        {error}
+                    </div>
+                )}
+
+                <form className="auth-form" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <input
                             type="email"
+                            name="email"
                             className="auth-input"
                             placeholder="Email address"
+                            value={form.email}
+                            onChange={handleChange}
                             required
                         />
                     </div>
@@ -27,16 +85,22 @@ const Register = () => {
                         <div className="form-group">
                             <input
                                 type="text"
+                                name="first_name"
                                 className="auth-input"
                                 placeholder="First name"
+                                value={form.first_name}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
                         <div className="form-group">
                             <input
                                 type="text"
+                                name="last_name"
                                 className="auth-input"
                                 placeholder="Last name"
+                                value={form.last_name}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -45,40 +109,56 @@ const Register = () => {
                     <div className="form-group">
                         <input
                             type="tel"
+                            name="phone_no"
                             className="auth-input"
                             placeholder="Phone number"
+                            value={form.phone_no}
+                            onChange={handleChange}
                             required
                         />
                     </div>
 
                     <div className="form-group">
                         <select
+                            name="qualification"
                             className="auth-input"
+                            value={form.qualification}
+                            onChange={handleChange}
                             required
-                            defaultValue=""
                         >
                             <option value="" disabled>Select Qualification</option>
-                            <option value="MBBS/MBChB">MBBS/ MBChB(Bachelor of Medicine, Bachelor of Surgery)</option>
+                            <option value="MBBS/MBChB">MBBS / MBChB (Bachelor of Medicine, Bachelor of Surgery)</option>
                             <option value="MD">MD (Doctor of Medicine)</option>
-                            <option value="BMBS/BMed">BMBS / BMed(Bachelor of Medicine, Bachelor of Surgery)</option>
-                            <option value="MRCP">MRCP(Member of the Royal College of Physicians)</option>
+                            <option value="BMBS/BMed">BMBS / BMed (Bachelor of Medicine, Bachelor of Surgery)</option>
+                            <option value="MRCP">MRCP (Member of the Royal College of Physicians)</option>
                         </select>
                     </div>
 
                     <div className="form-group position-relative">
                         <input
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
                             className="auth-input pr-10"
                             placeholder="Password"
+                            value={form.password}
+                            onChange={handleChange}
                             required
                         />
-                        <button type="button" className="password-toggle-btn">
-                            <Eye size={20} color="#718096" />
+                        <button
+                            type="button"
+                            className="password-toggle-btn"
+                            onClick={() => setShowPassword((v) => !v)}
+                        >
+                            {showPassword ? <EyeOff size={20} color="#718096" /> : <Eye size={20} color="#718096" />}
                         </button>
                     </div>
 
-                    <button type="submit" className="auth-submit-btn mb-4 mt-2">
-                        Sign Up
+                    <button
+                        type="submit"
+                        className="auth-submit-btn mb-4 mt-2"
+                        disabled={loading}
+                    >
+                        {loading ? 'Creating account…' : 'Sign Up'}
                     </button>
 
                     <div className="auth-divider mb-4">
