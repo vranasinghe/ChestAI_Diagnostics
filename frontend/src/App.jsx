@@ -9,7 +9,6 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import AccountSettings from './pages/AccountSettings';
-import AccountOwnership from './pages/AccountOwnership';
 import './App.css';
 
 function MainLayout({ children }) {
@@ -35,7 +34,6 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/account-settings" element={<AccountSettings />} />
-        <Route path="/account-ownership" element={<AccountOwnership />} />
       </Routes>
     </Router>
   );
