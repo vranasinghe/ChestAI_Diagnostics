@@ -186,9 +186,9 @@ const AccountSettings = () => {
                     <button className="notification-btn" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
                         < Bell size={20} />
                     </button>
-                    <div className="settings-avatar">
+                    <Link to="/dashboard" className="settings-avatar" style={{ textDecoration: 'none' }}>
                         {doctor.first_name.charAt(0)}
-                    </div>
+                    </Link>
                     <button className="settings-logout-btn-header" onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <LogOut size={18} />
                     </button>
