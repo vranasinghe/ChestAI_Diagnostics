@@ -13,6 +13,14 @@ class DoctorCreate(BaseModel):
     password: str
 
 
+class DoctorUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    phone_no: Optional[str] = None
+    qualification: Optional[str] = None
+    password: Optional[str] = None
+
+
 class DoctorLogin(BaseModel):
     email: EmailStr
     password: str
