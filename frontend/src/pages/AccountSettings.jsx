@@ -15,6 +15,20 @@ const AccountSettings = () => {
     const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'deactivate', etc.
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    // Form states
+    const [formData, setFormData] = useState({
+        first_name: '',
+        last_name: '',
+        phone_no: '',
+        qualification: ''
+    });
+    const [passwordData, setPasswordData] = useState({
+        newPassword: '',
+        confirmPassword: ''
+    });
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [message, setMessage] = useState({ text: '', type: '' });
+
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         const doctorData = localStorage.getItem('doctor');
@@ -23,13 +37,106 @@ const AccountSettings = () => {
             navigate('/login');
             return;
         }
-        setDoctor(JSON.parse(doctorData));
+        const parsedDoctor = JSON.parse(doctorData);
+        setDoctor(parsedDoctor);
+        setFormData({
+            first_name: parsedDoctor.first_name || '',
+            last_name: parsedDoctor.last_name || '',
+            phone_no: parsedDoctor.phone_no || '',
+            qualification: parsedDoctor.qualification || ''
+        });
     }, [navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('doctor');
         navigate('/login');
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handlePasswordChange = (e) => {
+        const { name, value } = e.target;
+        setPasswordData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        setIsUpdating(true);
+        setMessage({ text: '', type: '' });
+
+        try {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch('http://localhost:8000/auth/update-profile', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    phone_no: formData.phone_no,
+                    qualification: formData.qualification
+                })
+            });
+
+            if (response.ok) {
+                const updatedDoctor = await response.json();
+                setDoctor(updatedDoctor);
+                localStorage.setItem('doctor', JSON.stringify(updatedDoctor));
+                setMessage({ text: 'Profile updated successfully!', type: 'success' });
+            } else {
+                const errorData = await response.json();
+                setMessage({ text: errorData.detail || 'Failed to update profile.', type: 'error' });
+            }
+        } catch (error) {
+            console.error('Error updating profile:', error);
+            setMessage({ text: 'An error occurred. Please try again.', type: 'error' });
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleUpdatePassword = async (e) => {
+        e.preventDefault();
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setMessage({ text: 'Passwords do not match.', type: 'error' });
+            return;
+        }
+
+        setIsUpdating(true);
+        setMessage({ text: '', type: '' });
+
+        try {
+            const token = localStorage.getItem('access_token');
+            const response = await fetch('http://localhost:8000/auth/update-profile', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    password: passwordData.newPassword
+                })
+            });
+
+            if (response.ok) {
+                setMessage({ text: 'Password updated successfully!', type: 'success' });
+                setPasswordData({ newPassword: '', confirmPassword: '' });
+            } else {
+                const errorData = await response.json();
+                setMessage({ text: errorData.detail || 'Failed to update password.', type: 'error' });
+            }
+        } catch (error) {
+            console.error('Error updating password:', error);
+            setMessage({ text: 'An error occurred. Please try again.', type: 'error' });
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     const handleDeleteAccount = () => {
@@ -77,7 +184,7 @@ const AccountSettings = () => {
 
                 <div className="header-user-actions">
                     <button className="notification-btn" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}>
-                        <Bell size={20} />
+                        < Bell size={20} />
                     </button>
                     <div className="settings-avatar">
                         {doctor.first_name.charAt(0)}
@@ -116,40 +223,132 @@ const AccountSettings = () => {
 
                 {/* Main Content Area */}
                 <main className="settings-content-card">
+                    {message.text && (
+                        <div className={`settings-message ${message.type}`} style={{
+                            padding: '12px 16px',
+                            borderRadius: '8px',
+                            marginBottom: '24px',
+                            background: message.type === 'success' ? '#f0fdf4' : '#fef2f2',
+                            color: message.type === 'success' ? '#166534' : '#991b1b',
+                            border: `1px solid ${message.type === 'success' ? '#bbf7d0' : '#fecaca'}`,
+                            fontSize: '0.9rem',
+                            fontWeight: '600'
+                        }}>
+                            {message.text}
+                        </div>
+                    )}
+
                     {activeTab === 'basic' && (
                         <>
                             <h1 className="settings-content-title">Profile Information</h1>
-                            <div className="profile-details-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-                                <div className="detail-field">
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>First Name</label>
-                                    <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8f9fb' }}>{doctor.first_name}</div>
+                            <form onSubmit={handleUpdateProfile}>
+                                <div className="profile-details-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+                                    <div className="detail-field">
+                                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>First Name</label>
+                                        <input
+                                            type="text"
+                                            name="first_name"
+                                            value={formData.first_name}
+                                            onChange={handleInputChange}
+                                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
+                                        />
+                                    </div>
+                                    <div className="detail-field">
+                                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Last Name</label>
+                                        <input
+                                            type="text"
+                                            name="last_name"
+                                            value={formData.last_name}
+                                            onChange={handleInputChange}
+                                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
+                                        />
+                                    </div>
+                                    <div className="detail-field">
+                                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Username <span style={{ fontWeight: '400', fontSize: '0.75rem', color: '#94a3b8' }}>(Read-only)</span></label>
+                                        <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f1f5f9', color: '#64748b' }}>{doctor.username}</div>
+                                    </div>
+                                    <div className="detail-field">
+                                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Email Address <span style={{ fontWeight: '400', fontSize: '0.75rem', color: '#94a3b8' }}>(Read-only)</span></label>
+                                        <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f1f5f9', color: '#64748b' }}>{doctor.email}</div>
+                                    </div>
+                                    <div className="detail-field">
+                                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Phone Number</label>
+                                        <input
+                                            type="text"
+                                            name="phone_no"
+                                            value={formData.phone_no}
+                                            onChange={handleInputChange}
+                                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
+                                        />
+                                    </div>
+                                    <div className="detail-field">
+                                        <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Qualification</label>
+                                        <select
+                                            name="qualification"
+                                            value={formData.qualification}
+                                            onChange={handleInputChange}
+                                            style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', appearance: 'none', cursor: 'pointer' }}
+                                        >
+                                            <option value="" disabled>Select Qualification</option>
+                                            <option value="MBBS/MBChB">MBBS / MBChB (Bachelor of Medicine, Bachelor of Surgery)</option>
+                                            <option value="MD">MD (Doctor of Medicine)</option>
+                                            <option value="BMBS/BMed">BMBS / BMed (Bachelor of Medicine, Bachelor of Surgery)</option>
+                                            <option value="MRCP">MRCP (Member of the Royal College of Physicians)</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div className="detail-field">
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Last Name</label>
-                                    <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8f9fb' }}>{doctor.last_name}</div>
-                                </div>
-                                <div className="detail-field">
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Username</label>
-                                    <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8f9fb' }}>{doctor.username}</div>
-                                </div>
-                                <div className="detail-field">
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Email Address</label>
-                                    <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8f9fb' }}>{doctor.email}</div>
-                                </div>
-                                <div className="detail-field">
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Phone Number</label>
-                                    <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8f9fb' }}>{doctor.phone_no}</div>
-                                </div>
-                                <div className="detail-field">
-                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Qualification</label>
-                                    <div style={{ padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: '#f8f9fb' }}>{doctor.qualification}</div>
-                                </div>
-                            </div>
 
-                            <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
-                                <button style={{ padding: '10px 24px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
-                                <button style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#7c3aed', color: 'white', fontWeight: '600', cursor: 'pointer' }}>Update Profile</button>
-                            </div>
+                                <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'flex-end', gap: '16px' }}>
+                                    <button type="button" style={{ padding: '10px 24px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white', fontWeight: '600', cursor: 'pointer' }} onClick={() => navigate('/dashboard')}>Back to Dashboard</button>
+                                    <button
+                                        type="submit"
+                                        disabled={isUpdating}
+                                        style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#7c3aed', color: 'white', fontWeight: '600', cursor: isUpdating ? 'not-allowed' : 'pointer', opacity: isUpdating ? 0.7 : 1 }}
+                                    >
+                                        {isUpdating ? 'Updating...' : 'Update Profile'}
+                                    </button>
+                                </div>
+                            </form>
+                        </>
+                    )}
+
+                    {activeTab === 'signin' && (
+                        <>
+                            <h1 className="settings-content-title">Sign in Method</h1>
+                            <p style={{ color: '#64748b', marginBottom: '32px' }}>Update your account security settings here.</p>
+
+                            <form onSubmit={handleUpdatePassword} style={{ maxWidth: '440px' }}>
+                                <div className="detail-field" style={{ marginBottom: '24px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>New Password</label>
+                                    <input
+                                        type="password"
+                                        name="newPassword"
+                                        value={passwordData.newPassword}
+                                        onChange={handlePasswordChange}
+                                        required
+                                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
+                                    />
+                                </div>
+                                <div className="detail-field" style={{ marginBottom: '32px' }}>
+                                    <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: '600', color: '#64748b', marginBottom: '8px' }}>Confirm New Password</label>
+                                    <input
+                                        type="password"
+                                        name="confirmPassword"
+                                        value={passwordData.confirmPassword}
+                                        onChange={handlePasswordChange}
+                                        required
+                                        style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={isUpdating}
+                                    style={{ padding: '12px 32px', borderRadius: '8px', border: 'none', background: '#7c3aed', color: 'white', fontWeight: '600', cursor: isUpdating ? 'not-allowed' : 'pointer', opacity: isUpdating ? 0.7 : 1 }}
+                                >
+                                    {isUpdating ? 'Updating...' : 'Update Password'}
+                                </button>
+                            </form>
                         </>
                     )}
 
@@ -197,7 +396,7 @@ const AccountSettings = () => {
                         </>
                     )}
 
-                    {(activeTab !== 'basic' && activeTab !== 'deactivate') && (
+                    {(activeTab !== 'basic' && activeTab !== 'signin' && activeTab !== 'deactivate') && (
                         <div style={{ textAlign: 'center', padding: '100px 0', color: '#64748b' }}>
                             <h1 className="settings-content-title" style={{ marginBottom: '16px' }}>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h1>
                             <p>This section is under development.</p>
@@ -238,5 +437,6 @@ const AccountSettings = () => {
         </div>
     );
 };
+
 
 export default AccountSettings;
