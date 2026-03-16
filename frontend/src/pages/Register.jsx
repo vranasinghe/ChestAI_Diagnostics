@@ -28,7 +28,11 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setError('');
+        if (form.password.length < 8) {
+            setError('Password must be at least 8 characters long.');
+            setLoading(false);
+            return;
+        }
 
         try {
             const res = await fetch(`${API_BASE}/auth/register`, {
@@ -139,10 +143,11 @@ const Register = () => {
                             type={showPassword ? 'text' : 'password'}
                             name="password"
                             className="auth-input pr-10"
-                            placeholder="Password"
+                            placeholder="Password (minimum 8 characters)"
                             value={form.password}
                             onChange={handleChange}
                             required
+                            minLength="8"
                         />
                         <button
                             type="button"
