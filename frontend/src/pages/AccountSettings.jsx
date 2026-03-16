@@ -103,6 +103,11 @@ const AccountSettings = () => {
 
     const handleUpdatePassword = async (e) => {
         e.preventDefault();
+        if (passwordData.newPassword.length < 8) {
+            setMessage({ text: 'Password must be at least 8 characters long.', type: 'error' });
+            return;
+        }
+
         if (passwordData.newPassword !== passwordData.confirmPassword) {
             setMessage({ text: 'Passwords do not match.', type: 'error' });
             return;
@@ -326,6 +331,7 @@ const AccountSettings = () => {
                                         value={passwordData.newPassword}
                                         onChange={handlePasswordChange}
                                         required
+                                        minLength="8"
                                         style={{ width: '100%', padding: '12px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', background: 'white' }}
                                     />
                                 </div>
