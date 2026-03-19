@@ -86,7 +86,7 @@ class XRayDataset(Dataset):
 #Loading the data
 
 def get_dataloaders(batch_size=32, num_workers=4):
-    train_dataset = XRayDataset(TRAIN_CSV, RAW_IMAGES_BASE, transform=train_transforms)
+    train_dataset = XRayDataset(TRAIN_CSV, RAW_IMAGES_BASE, transform=train_transform)
     val_dataset   = XRayDataset(VAL_CSV, RAW_IMAGES_BASE, transform=val_test_transforms)
     test_dataset  = XRayDataset(TEST_CSV, RAW_IMAGES_BASE, transform=val_test_transforms)
 

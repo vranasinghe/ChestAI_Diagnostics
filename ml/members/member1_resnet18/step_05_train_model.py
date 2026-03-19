@@ -50,9 +50,9 @@ def main():
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss(weight=class_weights)
-    optimizer = optim.Adam(model.parameters(), lr=0.00005, weight_decay=1e-4)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-4)
 
-    EPOCHS = 20
+    EPOCHS = 8
     best_val_accuracy = 0
 
     for epoch in range(EPOCHS):
