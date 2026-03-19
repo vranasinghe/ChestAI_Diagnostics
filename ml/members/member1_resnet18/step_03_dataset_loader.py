@@ -26,12 +26,12 @@ with open(OUTPUT_LABEL_MAP, "r") as f:
 
 
 #Transforming
-train_transforms = transforms.Compose([
+train_transform = transforms.Compose([
     transforms.Resize((224, 224)),
     transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(10),
+    transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),
     transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
 ])
 
 val_test_transforms = transforms.Compose([
@@ -71,7 +71,12 @@ class XRayDataset(Dataset):
 
     def __getitem__(self, idx):
         img_path, label = self.image_paths[idx]
-        image = Image.open(img_path).convert("RGB")
+
+        try:
+            image = Image.open(img_path).convert("RGB")
+        except Exception as e:
+            print(f"Skipping corrupted image: {img_path}")
+            return self.__getitem__((idx + 1) % len(self.image_paths))
 
         if self.transform:
             image = self.transform(image)
@@ -81,7 +86,7 @@ class XRayDataset(Dataset):
 #Loading the data
 
 def get_dataloaders(batch_size=32, num_workers=4):
-    train_dataset = XRayDataset(TRAIN_CSV, RAW_IMAGES_BASE, transform=train_transforms)
+    train_dataset = XRayDataset(TRAIN_CSV, RAW_IMAGES_BASE, transform=train_transform)
     val_dataset   = XRayDataset(VAL_CSV, RAW_IMAGES_BASE, transform=val_test_transforms)
     test_dataset  = XRayDataset(TEST_CSV, RAW_IMAGES_BASE, transform=val_test_transforms)
 
