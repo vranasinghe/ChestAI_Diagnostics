@@ -8,17 +8,18 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
+import ManagePatients from './pages/ManagePatients';
 import AccountSettings from './pages/AccountSettings';
+import MedicalReports from './pages/MedicalReports';
 import './App.css';
 
 function MainLayout({ children }) {
   return (
     <div className="app-layout">
       <Header />
-      <main className="main-content container">
+      <main className="main-content container-fluid">
         {children}
       </main>
-      <Footer />
     </div>
   );
 }
@@ -33,7 +34,9 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/patients" element={<ManagePatients />} />
         <Route path="/account-settings" element={<AccountSettings />} />
+        <Route path="/reports" element={<MedicalReports />} />
       </Routes>
     </Router>
   );

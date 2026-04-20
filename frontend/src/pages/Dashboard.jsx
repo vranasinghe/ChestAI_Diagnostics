@@ -4,6 +4,7 @@ import {
     LayoutDashboard,
     Users,
     ClipboardCheck,
+    FileText,
     Settings,
     CreditCard,
     UserCircle,
@@ -65,8 +66,11 @@ const Dashboard = () => {
                     <a href="/dashboard" className="sidebar-link active">
                         <span className="sidebar-icon"><LayoutDashboard size={18} /></span> Dashboard
                     </a>
-                    <a href="#" className="sidebar-link">
+                    <a href="/patients" className="sidebar-link" onClick={(e) => { e.preventDefault(); navigate('/patients'); }}>
                         <span className="sidebar-icon"><Users size={18} /></span> Manage Patients
+                    </a>
+                    <a href="/reports" className="sidebar-link" onClick={(e) => { e.preventDefault(); navigate('/reports'); }}>
+                        <span className="sidebar-icon"><FileText size={18} /></span> Manage Reports
                     </a>
                     <a href="#" className="sidebar-link">
                         <span className="sidebar-icon"><ClipboardCheck size={18} /></span> Review
@@ -159,9 +163,9 @@ const Dashboard = () => {
                                     <div className="card-subtitle mb-4">Detected deceases by percentage</div>
                                     <div className="tested-results-grid">
                                         {[
-                                            { name: 'Mass', percent: 85, color: '#8b5cf6' },
-                                            { name: 'Pneumonia', percent: 85, color: '#f97316' },
-                                            { name: 'Nodule', percent: 92, color: '#22d3ee' }
+                                            { name: 'Mass', percent: 85, color: 'var(--brand-cyan)' },
+                                            { name: 'Pneumonia', percent: 85, color: 'var(--brand-blue)' },
+                                            { name: 'Nodule', percent: 92, color: 'var(--accent-purple)' }
                                         ].map((res, idx) => (
                                             <div key={idx} className="result-bubble-container">
                                                 <svg width="100" height="100" className="circle-progress">
@@ -170,7 +174,7 @@ const Dashboard = () => {
                                                         strokeDasharray={`${(res.percent / 100) * 282}, 282`} />
                                                 </svg>
                                                 <div className="result-label">
-                                                    <div className="result-percent">{res.percent}%</div>
+                                                    <div className="result-percent" style={{ color: res.color }}>{res.percent}%</div>
                                                     <div className="result-name">{res.name}</div>
                                                 </div>
                                             </div>
@@ -200,9 +204,9 @@ const Dashboard = () => {
                                     <div className="donut-chart">
                                         <svg width="150" height="150">
                                             <circle cx="75" cy="75" r="60" fill="none" stroke="#f1f5f9" strokeWidth="15" />
-                                            <circle cx="75" cy="75" r="60" fill="none" stroke="#22d3ee" strokeWidth="15"
+                                            <circle cx="75" cy="75" r="60" fill="none" stroke="var(--brand-cyan)" strokeWidth="15"
                                                 strokeDasharray="150, 377" strokeDashoffset="-75" />
-                                            <circle cx="75" cy="75" r="60" fill="none" stroke="#8b5cf6" strokeWidth="15"
+                                            <circle cx="75" cy="75" r="60" fill="none" stroke="var(--brand-blue)" strokeWidth="15"
                                                 strokeDasharray="120, 377" strokeDashoffset="75" />
                                         </svg>
                                     </div>
