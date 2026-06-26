@@ -11,13 +11,14 @@ import Dashboard from './pages/Dashboard';
 import ManagePatients from './pages/ManagePatients';
 import AccountSettings from './pages/AccountSettings';
 import MedicalReports from './pages/MedicalReports';
+import ReviewManagement from './pages/ReviewManagement';
 import './App.css';
 
 function MainLayout({ children }) {
   return (
-    <div className="app-layout">
+    <div className="public-layout">
       <Header />
-      <main className="main-content container-fluid">
+      <main className="public-wrapper">
         {children}
       </main>
     </div>
@@ -37,6 +38,7 @@ function App() {
         <Route path="/patients" element={<ManagePatients />} />
         <Route path="/account-settings" element={<AccountSettings />} />
         <Route path="/reports" element={<MedicalReports />} />
+        <Route path="/review" element={<ReviewManagement />} />
       </Routes>
     </Router>
   );

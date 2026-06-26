@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import './AccountSettings.css';
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
 const AccountSettings = () => {
     const navigate = useNavigate();
     const [doctor, setDoctor] = useState(null);
@@ -70,7 +72,7 @@ const AccountSettings = () => {
 
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8000/auth/update-profile', {
+            const response = await fetch(`${API_BASE}/auth/update-profile`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,7 +120,7 @@ const AccountSettings = () => {
 
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8000/auth/update-profile', {
+            const response = await fetch(`${API_BASE}/auth/update-profile`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -152,7 +154,7 @@ const AccountSettings = () => {
         try {
             const token = localStorage.getItem('access_token');
 
-            const response = await fetch('http://localhost:8000/auth/delete_account', {
+            const response = await fetch(`${API_BASE}/auth/delete_account`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -308,7 +310,7 @@ const AccountSettings = () => {
                                     <button
                                         type="submit"
                                         disabled={isUpdating}
-                                        style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#7c3aed', color: 'white', fontWeight: '600', cursor: isUpdating ? 'not-allowed' : 'pointer', opacity: isUpdating ? 0.7 : 1 }}
+                                        style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: '#14b8a6', color: 'white', fontWeight: '600', cursor: isUpdating ? 'not-allowed' : 'pointer', opacity: isUpdating ? 0.7 : 1 }}
                                     >
                                         {isUpdating ? 'Updating...' : 'Update Profile'}
                                     </button>
@@ -350,7 +352,7 @@ const AccountSettings = () => {
                                 <button
                                     type="submit"
                                     disabled={isUpdating}
-                                    style={{ padding: '12px 32px', borderRadius: '8px', border: 'none', background: '#7c3aed', color: 'white', fontWeight: '600', cursor: isUpdating ? 'not-allowed' : 'pointer', opacity: isUpdating ? 0.7 : 1 }}
+                                    style={{ padding: '12px 32px', borderRadius: '8px', border: 'none', background: '#14b8a6', color: 'white', fontWeight: '600', cursor: isUpdating ? 'not-allowed' : 'pointer', opacity: isUpdating ? 0.7 : 1 }}
                                 >
                                     {isUpdating ? 'Updating...' : 'Update Password'}
                                 </button>

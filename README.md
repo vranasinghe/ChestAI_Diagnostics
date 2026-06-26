@@ -95,63 +95,102 @@ git checkout develop
 
 ### 2. Backend Setup
 
-```
+```bash
 cd backend
 python -m venv .venv
-.\.venv\Scripts\activate   # Windows
+
+# On Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+
+# On Windows (CMD):
+.\.venv\Scripts\activate.bat
+
+# On macOS/Linux:
+source .venv/bin/activate
+
 pip install -r requirements.txt
 ```
 
-### 3. ML setup
+### 3. ML Setup
 
-ML dependencies installed via backend requirements.txt.
+ML dependencies are installed via the backend `requirements.txt`.
 
-Place dataset images in folders:
-
+Place dataset images in the following folders under the root directory:
+```
 data/images_001/
 data/images_002/
 ...
 data/images_012/
+```
+*(Images are ignored in git/GitHub for size reasons)*
 
+### 4. Frontend Setup
 
-(Images are ignored in GitHub for size reasons)
-
-### 4.Frontend Setup
+```bash
 cd ../frontend
 npm install
-npm run dev    # Starts local development server
+```
 
+---
 
-Access frontend at http://localhost:5173
+## Running the Project
 
-### 5.Docker Setup
-docker-compose up --build
+### Method A: Running Locally (Recommended for Development)
 
+To run the application locally outside of Docker, start the backend and frontend in separate terminal windows:
 
-Starts backend, frontend, and Celery workers
+#### 1. Start the Backend API
+Navigate to the `backend` directory, activate the virtual environment, and run the FastAPI server:
 
-Access frontend at http://localhost:5173
+* **Windows (PowerShell):**
+  ```powershell
+  cd backend
+  .\.venv\Scripts\Activate.ps1
+  uvicorn app.main:app --reload
+  ```
+* **Windows (CMD):**
+  ```cmd
+  cd backend
+  .\.venv\Scripts\activate.bat
+  uvicorn app.main:app --reload
+  ```
+* **macOS / Linux:**
+  ```bash
+  cd backend
+  source .venv/bin/activate
+  uvicorn app.main:app --reload
+  ```
 
-### Running the project locally
+*The API will run locally at [http://localhost:8000](http://localhost:8000).*
 
-Backend API:
-
-cd backend
-.\.venv\Scripts\activate
-uvicorn app.main:app --reload
-
-
-ML scripts:
-
-cd ml/binary
-python train.py   # Train binary model
-python inference.py   # Test inference
-
-
-Frontend:
-
+#### 2. Start the Frontend App
+Ensure your `frontend/.env` file exists with `VITE_API_BASE_URL=http://localhost:8000` (this is configured by default), then run the development server:
+```bash
 cd frontend
 npm run dev
+```
+
+*The web application will run at [http://localhost:5173](http://localhost:5173).*
+
+#### 3. Run ML Scripts (Optional)
+To run training or inference scripts separately:
+```bash
+cd ml/binary
+python train.py      # Train binary model
+python inference.py  # Test inference
+```
+
+---
+
+### Method B: Running via Docker
+
+To run the entire system (Backend, Frontend, database, Celery, and Redis) containerized:
+
+```bash
+docker-compose up --build
+```
+
+*Access the frontend web application at [http://localhost:5173](http://localhost:5173).*
 
 ## Branching Strategy
 

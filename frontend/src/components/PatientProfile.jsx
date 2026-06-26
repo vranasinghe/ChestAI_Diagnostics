@@ -127,7 +127,7 @@ export default function PatientProfile({ patient, loading, onEdit, onBack, onDel
                 </div>
             </div>
 
-            <div className="profile-actions" style={{ display: 'flex', gap: 16, marginTop: 32 }}>
+            <div className="profile-actions" style={{ display: 'flex', gap: 16, marginTop: 32, flexWrap: 'wrap' }}>
                 {!patient.is_active && onAuthorize && (
                     <button className="button primary" style={{ backgroundColor: 'var(--ink)', flex: 1, width: 'auto', whiteSpace: 'nowrap' }} onClick={onAuthorize}>
                         Send Verification Code

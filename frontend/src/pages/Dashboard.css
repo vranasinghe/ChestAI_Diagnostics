@@ -175,8 +175,8 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #ffe8d1;
-    color: #f97316;
+    background-color: #ccfbf1;
+    color: #14b8a6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,7 +192,7 @@
 .notification-btn {
     background: none;
     border: none;
-    color: #ff4d4d;
+    color: #14b8a6;
     cursor: pointer;
     padding: 4px;
     display: flex;
@@ -499,11 +499,11 @@
     border: 1px solid #e2e8f0;
     padding: 8px 16px;
     border-radius: 8px;
-    color: #ef4444;
+    color: #14b8a6;
     font-weight: 600;
     cursor: pointer;
 }
 
 .dashboard-logout-btn:hover {
-    background: #fef2f2;
+    background: #f0fdfa;
 }

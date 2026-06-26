@@ -1,124 +1,206 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../App.css';
 import Footer from './Footer';
+import './Home.css';
 
 const Home = () => {
     return (
-        <div className="home-container">
-            {/* Hero Section */}
-            <section className="hero container" id="home">
-                <div className="hero-content">
-                    <h1 className="hero-title">
-                        We Are Ready to <br />
-                        <span className="text-cyan">Scan the XRAYs</span> <br />
-                        for you
-                    </h1>
-                    <p className="hero-subtitle">
-                        In times like today, precision in diagnosis is very important, especially since the volume of imaging data is increasing day by day, so we are ready to help you with our advanced machine learning medical consultation.
-                    </p>
-                    <Link to="/register" className="pill-btn btn-cyan">Get Started</Link>
-                </div>
+        <div className="home-wrapper">
 
-                <div className="hero-visual">
-                    <div className="hero-bg-arch"></div>
-                    <div className="hero-arch-image arch-shape" style={{ background: 'url(https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80) no-repeat center center', backgroundSize: 'cover' }}>
+            {/* ============ HERO ============ */}
+            <section className="lp-hero">
+                <div className="lp-container">
+                    <div className="lp-hero-grid">
+                        <div className="lp-hero-left">
+                            <div className="lp-badge">🩺 AI-Powered Medical Imaging</div>
+                            <h1 className="lp-hero-title">
+                                Advanced X-Ray<br />
+                                <span className="lp-gradient-text">AI Diagnostics</span><br />
+                                for Clinicians
+                            </h1>
+                            <p className="lp-hero-subtitle">
+                                Upload a chest X-ray and instantly detect 6 diseases with
+                                state-of-the-art DenseNet &amp; EfficientNet models — complete
+                                with Grad-CAM visual explanations.
+                            </p>
+                            <div className="lp-hero-cta-row">
+                                <Link to="/register" className="lp-btn lp-btn-primary">Get Started Free</Link>
+                                <Link to="/login" className="lp-btn lp-btn-ghost">Sign In →</Link>
+                            </div>
+                            <div className="lp-hero-stats">
+                                <div className="lp-stat">
+                                    <span className="lp-stat-num">6</span>
+                                    <span className="lp-stat-label">Disease Classes</span>
+                                </div>
+                                <div className="lp-stat-divider" />
+                                <div className="lp-stat">
+                                    <span className="lp-stat-num">2</span>
+                                    <span className="lp-stat-label">AI Models</span>
+                                </div>
+                                <div className="lp-stat-divider" />
+                                <div className="lp-stat">
+                                    <span className="lp-stat-num">Grad-CAM</span>
+                                    <span className="lp-stat-label">Visual Heatmaps</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="lp-hero-right">
+                            <div className="lp-hero-card-bg" />
+                            <div className="lp-hero-image-arch">
+                                <img
+                                    src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80"
+                                    alt="Medical professional"
+                                />
+                            </div>
+                            <div className="lp-hero-float-card">
+                                <div className="lp-float-dot" />
+                                <div>
+                                    <div className="lp-float-label">AI Analysis Complete</div>
+                                    <div className="lp-float-value">Pneumonia detected — 91% confidence</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* CTA Banner Section */}
-            <section className="cta-banner-section container">
-                <div className="cta-banner-card">
-                    <div className="cta-banner-content">
-                        <h2>Get <span className="text-cyan">started with</span> Wedakam</h2>
-                        <p>Integrate our precision machine learning models into your clinical workflow. Secure, fast, and reliable diagnostic assistance tailored for medical healthcare providers.</p>
+            {/* ============ HOW IT WORKS ============ */}
+            <section className="lp-steps-section">
+                <div className="lp-container">
+                    <div className="lp-section-header">
+                        <h2>How <span className="lp-text-cyan">Wedakam</span> Works</h2>
+                        <p>Three simple steps to AI-powered X-ray diagnostics</p>
                     </div>
-                    <Link to="/register" className="pill-btn btn-cyan">Let's Get Started</Link>
+                    <div className="lp-steps-grid">
+                        {[
+                            { step: '01', icon: '📤', title: 'Upload X-Ray', desc: 'Upload your patient\'s chest X-ray image in JPEG or PNG format through our secure portal.' },
+                            { step: '02', icon: '🧠', title: 'AI Analysis', desc: 'Our DenseNet121 binary classifier and EfficientNet multi-class ensemble analyse the image.' },
+                            { step: '03', icon: '📋', title: 'Get Report', desc: 'Receive a detailed Grad-CAM heatmap report with disease probabilities and visual explanations.' },
+                        ].map((s) => (
+                            <div key={s.step} className="lp-step-card">
+                                <div className="lp-step-number">{s.step}</div>
+                                <div className="lp-step-icon">{s.icon}</div>
+                                <h3>{s.title}</h3>
+                                <p>{s.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ============ SERVICES ============ */}
+            <section className="lp-services-section" id="services">
+                <div className="lp-container">
+                    <div className="lp-services-layout">
+                        <div className="lp-services-left">
+                            <div className="lp-overline">Our Capabilities</div>
+                            <h2>Our <span className="lp-text-cyan">Special</span> Services</h2>
+                            <p className="lp-services-desc">
+                                State-of-the-art diagnostic tools built for modern healthcare providers.
+                                Fast, accurate, and explainable AI at every step.
+                            </p>
+                            <div className="lp-services-grid">
+                                {[
+                                    { icon: '⚡', title: 'Binary Classification', desc: 'Instantly detect Normal vs. Abnormal X-rays with DenseNet121.' },
+                                    { icon: '🧬', title: 'Multi-class Detection', desc: 'Identify 6 diseases: Atelectasis, Cardiomegaly, Emphysema and more.' },
+                                    { icon: '🔥', title: 'Grad-CAM Heatmaps', desc: 'Visual explanations overlaid on the X-ray to show what the AI sees.' },
+                                    { icon: '📋', title: 'Report Generation', desc: 'Auto-generate and email PDF medical reports directly to patients.' },
+                                ].map((s) => (
+                                    <div key={s.title} className="lp-service-item">
+                                        <div className="lp-service-icon">{s.icon}</div>
+                                        <div>
+                                            <h4>{s.title}</h4>
+                                            <p>{s.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="lp-services-right">
+                            <div className="lp-services-image-wrap">
+                                <img
+                                    src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=800&q=80"
+                                    alt="Medical imaging equipment"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ============ DISEASE CLASSES ============ */}
+            <section className="lp-diseases-section" id="product">
+                <div className="lp-container">
+                    <div className="lp-section-header">
+                        <h2>Detectable <span className="lp-text-cyan">Disease Classes</span></h2>
+                        <p>Our multi-class model can identify 6 critical thoracic conditions</p>
+                    </div>
+                    <div className="lp-diseases-grid">
+                        {[
+                            { name: 'Atelectasis', color: '#eab308', icon: '🫁' },
+                            { name: 'Cardiomegaly', color: '#ef4444', icon: '❤️' },
+                            { name: 'Emphysema', color: '#6366f1', icon: '💨' },
+                            { name: 'Pneumonia', color: '#f97316', icon: '🦠' },
+                            { name: 'Mass', color: '#8b5cf6', icon: '⚠️' },
+                            { name: 'Pneumothorax', color: '#22d3ee', icon: '🫧' },
+                        ].map((d) => (
+                            <div key={d.name} className="lp-disease-card" style={{ '--accent': d.color }}>
+                                <div className="lp-disease-icon">{d.icon}</div>
+                                <div className="lp-disease-name">{d.name}</div>
+                                <div className="lp-disease-bar" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ============ TESTIMONIAL ============ */}
+            <section className="lp-testimonial-section" id="about">
+                <div className="lp-container">
+                    <div className="lp-testimonial-layout">
+                        <div className="lp-testimonial-image-col">
+                            <div className="lp-testimonial-arch">
+                                <img
+                                    src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=800&q=80"
+                                    alt="Dr. James Wellington"
+                                />
+                            </div>
+                        </div>
+                        <div className="lp-testimonial-content">
+                            <div className="lp-overline">Testimonial</div>
+                            <blockquote className="lp-quote">
+                                "Wedakam has transformed how I interpret chest X-rays.
+                                The Grad-CAM heatmaps give me immediate visual insight
+                                into the model's reasoning and my diagnostic confidence
+                                has never been higher."
+                            </blockquote>
+                            <div className="lp-quote-author">
+                                <div className="lp-author-dot" />
+                                <div>
+                                    <div className="lp-author-name">Dr. James Wellington</div>
+                                    <div className="lp-author-role">Senior Cardiologist, City General Hospital</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ============ CTA ============ */}
+            <section className="lp-cta-section">
+                <div className="lp-container">
+                    <div className="lp-cta-card">
+                        <h2>Ready to elevate your diagnostic accuracy?</h2>
+                        <p>Join clinicians who trust Wedakam for AI-powered X-ray analysis. Get started for free today.</p>
+                        <div className="lp-cta-btns">
+                            <Link to="/register" className="lp-btn lp-btn-white">Create Free Account</Link>
+                            <Link to="/login" className="lp-btn lp-btn-ghost-white">Already have an account →</Link>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             <Footer />
-
-            {/* Special Services Section */}
-            <section className="special-services-section container" id="services">
-                <div className="special-services-layout">
-                    <div className="special-visual-container">
-                        <div className="special-image-arch arch-shape" style={{ background: 'url(https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=800&q=80) no-repeat center center', backgroundSize: 'cover' }}>
-                        </div>
-                    </div>
-
-                    <div className="special-content-container">
-                        <h2 className="section-title">Our <span className="text-cyan">Special Services</span></h2>
-                        <p className="section-subtitle">
-                            In times like today, diagnostic accuracy is very important, especially since the number of challenging cases is increasing day by day, so we are ready to help you with our advanced models.
-                        </p>
-
-                        <div className="special-services-grid">
-                            <div className="special-service-card">
-                                <div className="special-icon-box">0/1</div>
-                                <h3>Binary classification</h3>
-                                <p>Upload an image of your patient's XRAY. There is a binary classification model with high accuracy to detect whether there is a disease or not.</p>
-                            </div>
-                            <div className="special-service-card">
-                                <div className="special-icon-box">0</div>
-                                <h3>Multi-class classification</h3>
-                                <p>Automated detection of 12 diseases including pneumonia, pneumothorax, and cardiomegaly on standard PA films.</p>
-                            </div>
-                            <div className="special-service-card">
-                                <div className="special-icon-box">🔧</div>
-                                <h3>Fracture Detection</h3>
-                                <p>Pinpoint hairline fractures and skeletal abnormalities with high precision algorithms.</p>
-                            </div>
-                            <div className="special-service-card">
-                                <div className="special-icon-box">📱</div>
-                                <h3>DICOM Viewer</h3>
-                                <p>Integrated Web viewer for immediate manipulation and assessment of medical imaging data.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Main Categories Section */}
-            <section className="categories-section container" id="product">
-                <div className="categories-header">
-                    <h2 className="section-title center">Our <span className="text-cyan">Main Services</span> Categories</h2>
-                </div>
-
-                <div className="categories-layout">
-                    <div className="category-item">
-                        <div className="category-icon-circle">💬</div>
-                        <h3>Interact with the patient</h3>
-                        <p>Interact with the patient and get the proper diagnosis. You can send the medical reports using the system.</p>
-                    </div>
-
-                    <div className="category-item highlight">
-                        <div className="category-icon-circle accent">🧬</div>
-                        <h3>X-Ray Analysis</h3>
-                        <p>Just upload an image of the XRAY. Heavily trained Machine Learning model will classify the XRAY and provide you with the proper diagnosis.</p>
-                    </div>
-
-                    <div className="category-item">
-                        <div className="category-icon-circle">🏥</div>
-                        <h3>Clinical Integration</h3>
-                        <p>Get priority APIs in hospitals with Wedakam. Which allows you to integrate your local hospital's PACS practically and save time.</p>
-                    </div>
-                </div>
-            </section>
-
-            {/* Testimonial Section */}
-            <section className="testimonial-section container" id="about">
-                <div className="testimonial-layout">
-                    <div className="testimonial-info-box">
-                        <p className="box-tag">Cardiologist</p>
-                        <h3>Dr. James Wellington</h3>
-                        <a href="#readmore" className="read-more-link">Read More &rarr;</a>
-                    </div>
-                    <div className="testimonial-image-arch arch-shape" style={{ background: 'url(https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=800&q=80) no-repeat center center', backgroundSize: 'cover' }}>
-                    </div>
-                </div>
-            </section>
         </div>
     );
 };

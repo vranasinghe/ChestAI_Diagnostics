@@ -45,6 +45,12 @@ export default function XRayUpload({ patient, onCancel, onCompareRequested, onGe
     }, [patient]);
 
     const handlePatientChange = (field, value) => {
+        if (field === 'name') {
+            if (value && !/^[A-Za-z\s]*$/.test(value)) return;
+        } else if (field === 'age') {
+            if (value && !/^\d*$/.test(value)) return;
+            if (value && parseInt(value, 10) > 100) return;
+        }
         setPatientData(prev => ({ ...prev, [field]: value }));
     };
 
@@ -83,6 +89,19 @@ export default function XRayUpload({ patient, onCancel, onCompareRequested, onGe
     };
 
     const handleSubmit = async () => {
+        if (!patientData.name || !patientData.age || !patientData.gender || !patientData.contact) {
+            setError("Please fill all required patient details.");
+            return;
+        }
+
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(patientData.contact);
+        const isPhone = /^(\+?\d[\d\s-]{7,14})$/.test(patientData.contact);
+        
+        if (!isEmail && !isPhone) {
+            setError("Please enter a valid email address or phone number.");
+            return;
+        }
+
         if (!file) {
             setError("Please upload an image before proceeding.");
             return;
@@ -255,11 +274,8 @@ export default function XRayUpload({ patient, onCancel, onCompareRequested, onGe
                         </div>
 
                         <div style={{ display: 'flex', gap: 16, marginTop: 'auto', paddingTop: 24 }}>
-                            <button type="button" onClick={handleClearData} style={{ flex: 1, padding: '14px', borderRadius: 8, border: 'none', background: greenButtonColor, color: '#fff', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', transition: 'opacity 0.2s' }}>
+                            <button type="button" onClick={handleClearData} style={{ width: '100%', padding: '14px', borderRadius: 8, border: 'none', background: greenButtonColor, color: '#fff', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', transition: 'opacity 0.2s' }}>
                                 Clear Data
-                            </button>
-                            <button type="button" onClick={() => {}} style={{ flex: 1, padding: '14px', borderRadius: 8, border: 'none', background: greenButtonColor, color: '#fff', fontWeight: 700, fontSize: '1rem', cursor: 'pointer', transition: 'opacity 0.2s' }}>
-                                Edit
                             </button>
                         </div>
                     </div>

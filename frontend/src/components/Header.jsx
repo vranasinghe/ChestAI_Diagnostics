@@ -20,7 +20,7 @@ const Header = () => {
 
         <div className="header-actions">
           <Link to="/register" className="pill-btn btn-cyan" style={{ padding: '0.6rem 1.5rem' }}>Register</Link>
-          <Link to="/login" className="pill-btn btn-cyan" style={{ padding: '0.6rem 1.5rem' }}>Log in</Link>
+          <Link to="/login" className="pill-btn btn-outline-cyan" style={{ padding: '0.6rem 1.5rem' }}>Log in</Link>
         </div>
       </div>
     </header>

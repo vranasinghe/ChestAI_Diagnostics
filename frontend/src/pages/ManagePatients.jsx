@@ -236,7 +236,7 @@ export default function ManagePatients() {
                     <a href="/reports" className="sidebar-link" onClick={(e) => { e.preventDefault(); navigate('/reports'); }}>
                         <span className="sidebar-icon"><FileText size={18} /></span> Manage Reports
                     </a>
-                    <a href="#" className="sidebar-link">
+                    <a href="/review" className="sidebar-link" onClick={(e) => { e.preventDefault(); navigate('/review'); }}>
                         <span className="sidebar-icon"><ClipboardCheck size={18} /></span> Review
                     </a>
 

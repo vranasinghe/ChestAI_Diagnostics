@@ -3,7 +3,7 @@ import { ArrowLeft, Save, CheckCircle } from 'lucide-react';
 import { createReport, updateReport } from '../api/reports';
 import { saveDraftImages, getDraftImages, deleteDraftImages } from '../utils/draftStorage';
 
-export default function CreateReport({ patient, doctor, reportContext, initialReport, onSaveDraft, onFinalize, onBack }) {
+export default function CreateReport({ patient, doctor, reportContext, initialReport, readOnly = false, onSaveDraft, onFinalize, onBack }) {
     const [form, setForm] = useState({
         diagnosis: initialReport?.diagnosis || reportContext?.predictionText || '',
         clinical_observations: initialReport?.clinical_observations || '',
@@ -111,7 +111,14 @@ export default function CreateReport({ patient, doctor, reportContext, initialRe
                 <ArrowLeft size={18} /> Back
             </button>
 
-            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e293b', marginBottom: '8px' }}>Create New Report</h1>
+            <h1 style={{ fontSize: '1.75rem', fontWeight: 800, color: '#1e293b', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {readOnly ? 'Review Report' : 'Create New Report'}
+                {readOnly && (
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, background: '#f0fdfa', color: '#14b8a6', border: '1px solid #99f6e4', borderRadius: '20px', padding: '4px 12px', letterSpacing: '0.05em' }}>
+                        VIEW ONLY
+                    </span>
+                )}
+            </h1>
             <p style={{ color: '#64748b', marginBottom: '32px' }}>Patient: <strong>{patientName}</strong></p>
 
             {error && <div style={{ padding: '12px', background: '#fee2e2', color: '#991b1b', borderRadius: '8px', marginBottom: '20px' }}>{error}</div>}
@@ -160,21 +167,21 @@ export default function CreateReport({ patient, doctor, reportContext, initialRe
                             <h2 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#1e293b', margin: 0 }}>Clinical Notes</h2>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <div>
+                             <div>
                                 <label style={labelStyle}>Final Diagnosis</label>
-                                <textarea name="diagnosis" value={form.diagnosis} onChange={handleChange} rows={3} placeholder="Enter diagnosis here..." style={inputStyle} />
+                                <textarea name="diagnosis" value={form.diagnosis} onChange={readOnly ? undefined : handleChange} readOnly={readOnly} rows={3} placeholder="Enter diagnosis here..." style={{ ...inputStyle, ...(readOnly ? { background: '#f8fafc', color: '#475569', cursor: 'default', resize: 'none' } : {}) }} />
                             </div>
                             <div>
                                 <label style={labelStyle}>Clinical Observations</label>
-                                <textarea name="clinical_observations" value={form.clinical_observations} onChange={handleChange} rows={3} placeholder="Enter clinical observations..." style={inputStyle} />
+                                <textarea name="clinical_observations" value={form.clinical_observations} onChange={readOnly ? undefined : handleChange} readOnly={readOnly} rows={3} placeholder="Enter clinical observations..." style={{ ...inputStyle, ...(readOnly ? { background: '#f8fafc', color: '#475569', cursor: 'default', resize: 'none' } : {}) }} />
                             </div>
                             <div>
                                 <label style={labelStyle}>Treatment Plan</label>
-                                <textarea name="treatment_plan" value={form.treatment_plan} onChange={handleChange} rows={3} placeholder="Enter treatment plan..." style={inputStyle} />
+                                <textarea name="treatment_plan" value={form.treatment_plan} onChange={readOnly ? undefined : handleChange} readOnly={readOnly} rows={3} placeholder="Enter treatment plan..." style={{ ...inputStyle, ...(readOnly ? { background: '#f8fafc', color: '#475569', cursor: 'default', resize: 'none' } : {}) }} />
                             </div>
                             <div>
                                 <label style={labelStyle}>Additional Comments</label>
-                                <textarea name="additional_comments" value={form.additional_comments} onChange={handleChange} rows={3} placeholder="Any other notes..." style={inputStyle} />
+                                <textarea name="additional_comments" value={form.additional_comments} onChange={readOnly ? undefined : handleChange} readOnly={readOnly} rows={3} placeholder="Any other notes..." style={{ ...inputStyle, ...(readOnly ? { background: '#f8fafc', color: '#475569', cursor: 'default', resize: 'none' } : {}) }} />
                             </div>
                         </div>
                     </div>
@@ -218,23 +225,25 @@ export default function CreateReport({ patient, doctor, reportContext, initialRe
                 </div>
             </div>
 
-            {/* Action Buttons */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '32px' }}>
-                <button
-                    onClick={handleSaveDraft}
-                    disabled={saving}
-                    style={{ padding: '12px 28px', background: '#fff', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '8px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                    <Save size={16} /> Save Draft
-                </button>
-                <button
-                    onClick={handleFinalize}
-                    disabled={saving}
-                    style={{ padding: '12px 28px', background: '#14b8a6', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                    <CheckCircle size={16} /> {saving ? 'Saving...' : 'Finalize & Approve'}
-                </button>
-            </div>
+            {/* Action Buttons — hidden in readOnly/review mode */}
+            {!readOnly && (
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', marginTop: '32px' }}>
+                    <button
+                        onClick={handleSaveDraft}
+                        disabled={saving}
+                        style={{ padding: '12px 28px', background: '#fff', color: '#475569', border: '1px solid #cbd5e1', borderRadius: '8px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <Save size={16} /> Save Draft
+                    </button>
+                    <button
+                        onClick={handleFinalize}
+                        disabled={saving}
+                        style={{ padding: '12px 28px', background: '#14b8a6', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: saving ? 'not-allowed' : 'pointer', fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                        <CheckCircle size={16} /> {saving ? 'Saving...' : 'Finalize & Approve'}
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
