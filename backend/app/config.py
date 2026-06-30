@@ -13,9 +13,6 @@ class Settings(BaseSettings):
     MAIL_PORT: int = 587
     MAIL_SERVER: str = "smtp.gmail.com"
     MAIL_FROM_NAME: str = "Wedakam Medical Report System"
-    
-    GEMINI_API_KEY: str = ""
-    ANTHROPIC_API_KEY: str = ""
 
     class Config:
         import os

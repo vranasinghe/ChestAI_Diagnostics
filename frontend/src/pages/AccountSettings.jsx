@@ -264,8 +264,8 @@ const AccountSettings = () => {
                                     <div className="as-overview-card-value">Radiologist / Clinician</div>
                                 </div>
                                 <div className="as-overview-card">
-                                    <div className="as-overview-card-title">RAG Assistant</div>
-                                    <div className="as-overview-card-value teal">Enabled (Offline/Gemini)</div>
+                                    <div className="as-overview-card-title">Audit Logging</div>
+                                    <div className="as-overview-card-value teal">Active</div>
                                 </div>
                             </div>
                             <div className="as-info-block">
@@ -485,10 +485,6 @@ const AccountSettings = () => {
                             <div className="as-billing-feature">
                                 <CheckCircle2 size={16} className="as-billing-check" />
                                 <span>Automated clinician reports generation in standard PDF formats</span>
-                            </div>
-                            <div className="as-billing-feature">
-                                <CheckCircle2 size={16} className="as-billing-check" />
-                                <span>RAG-powered clinical chatbot assistant access</span>
                             </div>
                         </div>
                     </>

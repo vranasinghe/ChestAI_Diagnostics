@@ -9,23 +9,17 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from app.core.rate_limit import limiter
 from app.db import init_db
-from app.api import routes_auth, routes_patient, routes_xray, routes_comparison, routes_report, routes_chatbot
+from app.api import routes_auth, routes_patient, routes_xray, routes_comparison, routes_report
 from app.api.middlewares import AuditLogMiddleware
-from app.services.rag import init_rag_system
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: create database tables and initialize RAG
+    # Startup: create database tables
     init_db.create_tables()
-    try:
-        init_rag_system()
-    except Exception as e:
-        print(f"Failed to initialize RAG: {e}")
     yield
-    # Shutdown: nothing needed for now
 
 
 app = FastAPI(
@@ -70,7 +64,6 @@ app.include_router(routes_patient.router)
 app.include_router(routes_xray.router)
 app.include_router(routes_comparison.router)
 app.include_router(routes_report.router)
-app.include_router(routes_chatbot.router)
 
 
 @app.get("/")
