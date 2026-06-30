@@ -5,14 +5,28 @@ const apiClient = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
+    withCredentials: true,
 });
 
-apiClient.interceptors.request.use((config) => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+apiClient.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            const path = window.location.pathname;
+            // Prevent redirect loops on public/auth pages
+            if (
+                path !== "/login" &&
+                path !== "/register" &&
+                path !== "/forgot-password" &&
+                path !== "/reset-password" &&
+                path !== "/"
+            ) {
+                localStorage.removeItem("doctor");
+                window.location.href = "/login";
+            }
+        }
+        return Promise.reject(error);
     }
-    return config;
-});
+);
 
 export default apiClient;

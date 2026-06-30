@@ -1,11 +1,12 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date
+from app.models.enums import ReportStatusEnum
 
 
 class ReportCreate(BaseModel):
     patient_name: str
-    status: str = "Draft"  # 'Draft' or 'Finalized'
+    status: ReportStatusEnum = ReportStatusEnum.DRAFT
     diagnosis: Optional[str] = None
     clinical_observations: Optional[str] = None
     treatment_plan: Optional[str] = None
@@ -14,7 +15,7 @@ class ReportCreate(BaseModel):
 
 class ReportUpdate(BaseModel):
     patient_name: Optional[str] = None
-    status: Optional[str] = None
+    status: Optional[ReportStatusEnum] = None
     diagnosis: Optional[str] = None
     clinical_observations: Optional[str] = None
     treatment_plan: Optional[str] = None
@@ -25,7 +26,7 @@ class ReportOut(BaseModel):
     report_id: int
     doctor_id: int
     patient_name: str
-    status: str
+    status: ReportStatusEnum
     diagnosis: Optional[str] = None
     clinical_observations: Optional[str] = None
     treatment_plan: Optional[str] = None

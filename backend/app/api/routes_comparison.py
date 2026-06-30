@@ -18,13 +18,14 @@ def create_comparison(
     # Enforce maximum 4 profiles for each member limit: auto-remove the oldest if there are 4 or more.
     existing_comparisons = db.query(Comparison).filter(
         Comparison.doctor_id == current_doctor.id,
-        Comparison.patient_name == payload.patient_name
+        Comparison.patient_name == payload.patient_name,
+        Comparison.is_archived == False
     ).order_by(Comparison.case_id.asc()).all()
 
     if len(existing_comparisons) >= 4:
         num_to_delete = len(existing_comparisons) - 3
         for comp in existing_comparisons[:num_to_delete]:
-            db.delete(comp)
+            comp.is_archived = True
         db.commit()
 
     db_comparison = Comparison(
@@ -44,7 +45,10 @@ def list_comparisons(
     db: Session = Depends(get_db), 
     current_doctor: Doctor = Depends(get_current_doctor)
 ):
-    return db.query(Comparison).filter(Comparison.doctor_id == current_doctor.id).all()
+    return db.query(Comparison).filter(
+        Comparison.doctor_id == current_doctor.id,
+        Comparison.is_archived == False
+    ).all()
 
 @router.put("/{case_id}", response_model=ComparisonOut)
 def update_comparison(
@@ -84,6 +88,6 @@ def delete_comparison(
     if not db_comparison:
         raise HTTPException(status_code=404, detail="Comparison record not found")
 
-    db.delete(db_comparison)
+    db_comparison.is_archived = True
     db.commit()
     return None

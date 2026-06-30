@@ -58,3 +58,12 @@ werkzeug==3.1.6
 torch
 torchvision
 opencv-python-headless
+slowapi
+prometheus-fastapi-instrumentator
+pydicom
+langchain
+langchain-anthropic
+chromadb
+sqlalchemy-utils
+langchain-community
+langchain-google-genai

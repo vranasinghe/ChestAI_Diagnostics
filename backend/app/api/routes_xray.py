@@ -1,7 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status, Request
 from sqlalchemy.orm import Session
 from uuid import UUID
 from datetime import date
+import io
+import os
+import uuid
+from PIL import Image as PILImage
 
 from app.db.session import get_db
 from app.core.security import get_current_doctor
@@ -9,6 +13,11 @@ from app.models.doctor import Doctor
 from app.models.patient import PatientPortfolio
 from app.models.image import Image
 from app.inference.inference_service import inference_service
+from app.core.rate_limit import limiter
+from app.tasks import predict_xray_task
+from celery.result import AsyncResult
+from app.tasks import celery_app
+from app.services.dicom_service import convert_dicom_to_png
 
 router = APIRouter(prefix="/xray", tags=["xray"])
 
@@ -19,7 +28,9 @@ def _calculate_age(dob: date) -> int:
 
 
 @router.post("/predict")
+@limiter.limit("10/minute")
 async def predict_xray(
+    request: Request,
     patient_id: UUID = Form(...),
     x_ray_view: str = Form("PA"),
     file: UploadFile = File(...),
@@ -42,7 +53,16 @@ async def predict_xray(
             detail="Patient not found or unauthorized",
         )
 
-    # 2. Read image bytes
+    # 2. Server-side validations
+    # A. Validate MIME type & file extension (allow JPG, PNG, DCM)
+    is_dicom = file.content_type == "application/dicom" or file.filename.lower().endswith(".dcm")
+    if file.content_type not in ["image/jpeg", "image/png"] and not is_dicom:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Invalid file type. Only JPEG, PNG and DICOM (.dcm) are allowed.",
+        )
+
+    # B. Read image bytes and validate file size (Max 10MB)
     image_bytes = await file.read()
     if not image_bytes:
         raise HTTPException(
@@ -50,14 +70,42 @@ async def predict_xray(
             detail="Uploaded file is empty",
         )
 
-    # 3. Run inference (binary + multiclass + Grad-CAM)
-    result = inference_service.predict(image_bytes)
-
-    if "error" in result:
+    file_size = len(image_bytes)
+    if file_size > 10 * 1024 * 1024:  # 10MB
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=result["error"],
+            detail="File size exceeds the 10MB limit.",
         )
+
+    # If DICOM, convert to PNG
+    if is_dicom:
+        try:
+            image_bytes = convert_dicom_to_png(image_bytes)
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Failed to process DICOM file: {str(exc)}",
+            )
+
+    # C. Validate image dimensions using Pillow
+    try:
+        pil_img = PILImage.open(io.BytesIO(image_bytes))
+        width, height = pil_img.size
+        if width <= 0 or height <= 0:
+            raise ValueError("Image dimensions must be positive.")
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid image format or dimensions: {str(exc)}",
+        )
+
+    # 3. Save raw image and dispatch inference task to Celery
+    image_uuid = str(uuid.uuid4())
+    raw_path = f"/storage/raw_{image_uuid}.jpg"
+    with open(raw_path, "wb") as f:
+        f.write(image_bytes)
+
+    job = predict_xray_task.delay(image_uuid)
 
     # 4. Persist scan metadata
     patient_age = _calculate_age(patient.dob) if patient.dob else 0
@@ -73,4 +121,15 @@ async def predict_xray(
     db.add(db_image)
     db.commit()
 
-    return {"status": "success", "data": result}
+    return {"status": "accepted", "job_id": job.id, "message": "Inference task queued"}
+
+@router.get("/status/{job_id}")
+async def get_inference_status(job_id: str):
+    """
+    Poll the status of an inference job.
+    """
+    result = AsyncResult(job_id, app=celery_app)
+    if result.ready():
+        return {"status": "completed", "job_id": job_id, "data": result.get()}
+    else:
+        return {"status": "processing", "job_id": job_id}

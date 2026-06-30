@@ -12,6 +12,7 @@ import ManagePatients from './pages/ManagePatients';
 import AccountSettings from './pages/AccountSettings';
 import MedicalReports from './pages/MedicalReports';
 import ReviewManagement from './pages/ReviewManagement';
+import ChatbotSidebar from './components/ChatbotSidebar';
 import './App.css';
 
 function MainLayout({ children }) {
@@ -40,6 +41,7 @@ function App() {
         <Route path="/reports" element={<MedicalReports />} />
         <Route path="/review" element={<ReviewManagement />} />
       </Routes>
+      <ChatbotSidebar />
     </Router>
   );
 }

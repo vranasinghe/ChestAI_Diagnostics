@@ -19,6 +19,7 @@ class ComparisonUpdate(BaseModel):
 class ComparisonOut(ComparisonBase):
     case_id: int
     doctor_id: int
+    is_archived: bool
     created_date: date
     created_time: time
 

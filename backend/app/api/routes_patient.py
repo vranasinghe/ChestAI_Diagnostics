@@ -2,11 +2,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import random
+from datetime import datetime, timezone
 
 from app.crud import patient as crud_patient
 from app.db.session import get_db
 from app.schemas.patient import PatientCreate, PatientOut, PatientUpdate, OTPVerify
-from app.core.email import send_otp_email
+from app.tasks import send_otp_email_task
 from app.core.security import get_current_doctor, hash_password, verify_password
 from app.models.doctor import Doctor
 
@@ -35,7 +36,7 @@ def create_patient(payload: PatientCreate, db: Session = Depends(get_db), curren
         raise e
     
     if patient.email:
-        send_otp_email(patient.email, plain_otp, f"{patient.first_name} {patient.last_name}")
+        send_otp_email_task.delay(patient.email, plain_otp, f"{patient.first_name} {patient.last_name}")
             
     return patient
 
@@ -50,8 +51,20 @@ def verify_otp(patient_id: UUID, payload: OTPVerify, db: Session = Depends(get_d
     if not patient.otp or not verify_password(payload.otp, patient.otp):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid verification code")
         
+    if patient.otp_created_at:
+        now_utc = datetime.now(timezone.utc)
+        otp_time = patient.otp_created_at
+        if otp_time.tzinfo is None:
+            otp_time = otp_time.replace(tzinfo=timezone.utc)
+        if (now_utc - otp_time).total_seconds() > 15 * 60:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Verification code has expired. Please request a new one."
+            )
+        
     patient.is_active = True
     patient.otp = None
+    patient.otp_created_at = None
     db.add(patient)
     db.commit()
     db.refresh(patient)
@@ -67,12 +80,13 @@ def send_otp(patient_id: UUID, db: Session = Depends(get_db), current_doctor: Do
     
     plain_otp = "".join(str(random.randint(0, 9)) for _ in range(6))
     patient.otp = hash_password(plain_otp)
+    patient.otp_created_at = datetime.now(timezone.utc)
     db.add(patient)
     db.commit()
     db.refresh(patient)
     
     if patient.email:
-        send_otp_email(patient.email, plain_otp, f"{patient.first_name} {patient.last_name}")
+        send_otp_email_task.delay(patient.email, plain_otp, f"{patient.first_name} {patient.last_name}")
             
     return patient
 

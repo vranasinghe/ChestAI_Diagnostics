@@ -13,3 +13,8 @@ export const uploadXRayToPredict = async (patientId, file, viewType = 'PA') => {
     });
     return response.data;
 };
+
+export const getInferenceStatus = async (jobId) => {
+    const response = await client.get(`/xray/status/${jobId}`);
+    return response.data;
+};

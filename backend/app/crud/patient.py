@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from uuid import UUID
@@ -6,7 +7,15 @@ from app.models.patient import PatientPortfolio
 from app.schemas.patient import PatientCreate, PatientUpdate
 
 def create_patient(db: Session, patient_in: PatientCreate, doctor_id: int, username: str, otp: str | None = None) -> PatientPortfolio:
-    patient = PatientPortfolio(**patient_in.model_dump(), doctor_id=doctor_id, username=username, otp=otp, is_active=False)
+    otp_created_at = datetime.now(timezone.utc) if otp else None
+    patient = PatientPortfolio(
+        **patient_in.model_dump(),
+        doctor_id=doctor_id,
+        username=username,
+        otp=otp,
+        otp_created_at=otp_created_at,
+        is_active=False
+    )
     db.add(patient)
     db.commit()
     db.refresh(patient)

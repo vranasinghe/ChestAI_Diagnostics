@@ -1,6 +1,6 @@
 import { Upload, X, Loader2, Folder, AlertCircle } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
-import { uploadXRayToPredict } from "../api/xray";
+import { uploadXRayToPredict, getInferenceStatus } from "../api/xray";
 import ResultCard from "./ResultCard";
 
 export default function XRayUpload({ patient, onCancel, onCompareRequested, onGenerateReport }) {
@@ -114,7 +114,23 @@ export default function XRayUpload({ patient, onCancel, onCompareRequested, onGe
         setError(null);
         try {
             const response = await uploadXRayToPredict(patient?.id || '00000000-0000-0000-0000-000000000000', file, viewToggle);
-            if (response && response.status === "success") {
+            if (response && response.status === "accepted" && response.job_id) {
+                let jobStatus = "processing";
+                let retryCount = 0;
+                while (jobStatus === "processing" && retryCount < 60) {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    const statusRes = await getInferenceStatus(response.job_id);
+                    jobStatus = statusRes.status;
+                    if (jobStatus === "completed") {
+                        setPredictionResult(statusRes.data);
+                        break;
+                    }
+                    retryCount++;
+                }
+                if (jobStatus !== "completed") {
+                    throw new Error("Inference timed out or failed.");
+                }
+            } else if (response && response.status === "success") {
                 setPredictionResult(response.data);
             } else {
                 throw new Error("Invalid response format from server.");

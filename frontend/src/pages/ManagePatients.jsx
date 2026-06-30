@@ -52,11 +52,12 @@ export default function ManagePatients() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
     useEffect(() => {
-        const token = localStorage.getItem('access_token');
         const doctorData = localStorage.getItem('doctor');
 
-        if (!token || !doctorData) {
+        if (!doctorData) {
             navigate('/login');
             return;
         }
@@ -64,8 +65,15 @@ export default function ManagePatients() {
         loadPatients();
     }, [navigate]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('access_token');
+    const handleLogout = async () => {
+        try {
+            await fetch(`${API_BASE}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch (e) {
+            console.error('Error logging out:', e);
+        }
         localStorage.removeItem('doctor');
         navigate('/login');
     };

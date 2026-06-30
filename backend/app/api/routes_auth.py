@@ -1,11 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 
+from app.config import settings
 from app.db.session import get_db
 from app.models.doctor import Doctor
 from app.schemas.doctor import DoctorCreate, DoctorLogin, DoctorOut, Token, DoctorUpdate
-from app.core.security import hash_password, verify_password, create_access_token
+from app.core.security import hash_password, verify_password, create_access_token, create_refresh_token
 from app.core.security import get_current_doctor
+from app.models.auth import RefreshToken
+from datetime import datetime, timedelta, timezone
+from jose import jwt, JWTError
+
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -45,7 +50,7 @@ def register(payload: DoctorCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=Token)
-def login(payload: DoctorLogin, db: Session = Depends(get_db)):
+def login(payload: DoctorLogin, response: Response, db: Session = Depends(get_db)):
     # 1. Look up doctor by email
     doctor = db.query(Doctor).filter(Doctor.email == payload.email).first()
     if not doctor:
@@ -61,16 +66,149 @@ def login(payload: DoctorLogin, db: Session = Depends(get_db)):
             detail="Invalid email or password",
         )
 
-    # 3. Issue JWT
+    # 3. Issue Access & Refresh Tokens
     token = create_access_token(
         data={"sub": str(doctor.id), "username": doctor.username}
+    )
+    refresh_token = create_refresh_token(
+        data={"sub": str(doctor.id)}
+    )
+
+    # 4. Save Refresh Token in DB
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    db_refresh = RefreshToken(
+        doctor_id=doctor.id,
+        token=refresh_token,
+        expires_at=expires_at
+    )
+    db.add(db_refresh)
+    db.commit()
+
+    # 5. Set httpOnly secure cookies
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60 if hasattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES") else 1440 * 60,
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60, # 7 days
     )
 
     return Token(
         access_token=token,
+        refresh_token=refresh_token,
         token_type="bearer",
         doctor=DoctorOut.from_orm(doctor),
     )
+
+
+@router.post("/logout")
+def logout(response: Response, db: Session = Depends(get_db), current_doctor: Doctor = Depends(get_current_doctor)):
+    # Revoke all active refresh tokens for the doctor
+    db.query(RefreshToken).filter(
+        RefreshToken.doctor_id == current_doctor.id,
+        RefreshToken.is_revoked == False
+    ).update({"is_revoked": True})
+    db.commit()
+
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    response.delete_cookie(
+        key="refresh_token",
+        httponly=True,
+        secure=True,
+        samesite="lax"
+    )
+    return {"detail": "Logged out successfully"}
+
+
+@router.post("/refresh", response_model=Token)
+def refresh_tokens(request: Request, response: Response, db: Session = Depends(get_db)):
+    # Get refresh token from cookie or header
+    from fastapi import Request
+    refresh_token = request.cookies.get("refresh_token")
+    if not refresh_token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            refresh_token = auth_header.split(" ")[1]
+
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Refresh token missing")
+
+    try:
+        payload = jwt.decode(refresh_token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+        doctor_id = int(payload.get("sub"))
+    except (JWTError, ValueError):
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+    # Look up in DB
+    db_token = db.query(RefreshToken).filter(RefreshToken.token == refresh_token).first()
+
+    # Token Recycling Security Check: If token is already revoked, revoke all tokens for this doctor!
+    if db_token and db_token.is_revoked:
+        db.query(RefreshToken).filter(RefreshToken.doctor_id == doctor_id).update({"is_revoked": True})
+        db.commit()
+        raise HTTPException(status_code=401, detail="Token compromised and revoked")
+
+    if not db_token or db_token.expires_at.replace(tzinfo=timezone.utc) < datetime.now(timezone.utc):
+        raise HTTPException(status_code=401, detail="Refresh token expired or invalid")
+
+    # Valid token! Recycle: revoke old, generate new
+    db_token.is_revoked = True
+    
+    doctor = db.query(Doctor).filter(Doctor.id == doctor_id).first()
+    if not doctor:
+        raise HTTPException(status_code=401, detail="Doctor not found")
+
+    new_access = create_access_token(data={"sub": str(doctor_id), "username": doctor.username})
+    new_refresh = create_refresh_token(data={"sub": str(doctor_id)})
+
+    new_expires = datetime.now(timezone.utc) + timedelta(days=7)
+    new_db_token = RefreshToken(
+        doctor_id=doctor_id,
+        token=new_refresh,
+        expires_at=new_expires
+    )
+    db.add(new_db_token)
+    db.commit()
+
+    # Set new cookies
+    response.set_cookie(
+        key="access_token",
+        value=new_access,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60
+    )
+
+    return Token(
+        access_token=new_access,
+        refresh_token=new_refresh,
+        token_type="bearer",
+        doctor=DoctorOut.from_orm(doctor),
+    )
+
 
 
 @router.delete("/delete_account", status_code=status.HTTP_200_OK)

@@ -8,7 +8,7 @@ from app.schemas.report import ReportCreate, ReportOut, ReportUpdate
 from app.models.report import Report
 from app.core.security import get_current_doctor
 from app.models.doctor import Doctor
-from app.core.email import send_report_email
+from app.tasks import send_report_email_task
 
 class PatientContextPayload(BaseModel):
     gender: Optional[str] = 'N/A'
@@ -136,7 +136,7 @@ def email_report(
     }
     
     try:
-        send_report_email(payload.email, report_dict)
-        return {"message": "Email sent successfully"}
+        send_report_email_task.delay(payload.email, report_dict)
+        return {"message": "Report email queued successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

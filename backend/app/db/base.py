@@ -6,3 +6,5 @@ from app.models.report import Report  # noqa
 from app.models.comparison import Comparison  # noqa
 from app.models.image import Image  # noqa
 from app.models.review import Review  # noqa
+from app.models.audit import AuditLog  # noqa
+from app.models.auth import RefreshToken  # noqa

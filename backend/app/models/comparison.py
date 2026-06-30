@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Time, Date, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Time, Date, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -14,6 +14,7 @@ class Comparison(Base):
     condition = Column(String(200), nullable=True)
     disease = Column(String(200), nullable=True)
     doctor_note = Column(Text, nullable=True)
+    is_archived = Column(Boolean, default=False, nullable=False)
     created_date = Column(Date, server_default=func.current_date(), nullable=False)
     created_time = Column(Time, server_default=func.current_time(), nullable=False)
 

@@ -32,6 +32,7 @@ const Login = () => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
+                credentials: 'include',
             });
 
             const data = await res.json();
@@ -41,8 +42,7 @@ const Login = () => {
                 return;
             }
 
-            // Persist token and doctor info in localStorage
-            localStorage.setItem('access_token', data.access_token);
+            // Persist doctor info in localStorage
             localStorage.setItem('doctor', JSON.stringify(data.doctor));
 
             // Redirect to the Doctor Dashboard
@@ -119,6 +119,31 @@ const Login = () => {
                         disabled={loading}
                     >
                         {loading ? 'Signing in…' : 'Sign In'}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setForm({ email: 'demo@wedakam.com', password: 'password123' });
+                        }}
+                        style={{
+                            marginTop: 12,
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: 8,
+                            border: '1px dashed #14b8a6',
+                            background: '#f0fdfa',
+                            color: '#0d9488',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            fontSize: '0.9rem',
+                            transition: 'background 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = '#e6fffa'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = '#f0fdfa'}
+                    >
+                        Use Demo Doctor Account
                     </button>
                 </form>
 

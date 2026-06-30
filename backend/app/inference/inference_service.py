@@ -170,8 +170,8 @@ class XRayInferenceService:
 
     # ── Heatmap overlay ────────────────────────────────────────────────────
 
-    def _generate_heatmap_overlay(self, image_bytes: bytes, cam_map: np.ndarray | None) -> str:
-        """Blend a Grad-CAM heat map onto the original image and return a base-64 data URI."""
+    def _generate_heatmap_overlay(self, image_bytes: bytes, cam_map: np.ndarray | None, image_uuid: str) -> str:
+        """Blend a Grad-CAM heat map onto the original image and save it to /storage."""
         try:
             img = Image.open(io.BytesIO(image_bytes)).convert('RGB')
             img_arr = np.array(img)
@@ -185,26 +185,35 @@ class XRayInferenceService:
             else:
                 out_img = img
 
-            buf = io.BytesIO()
-            out_img.save(buf, format='JPEG')
-            encoded = base64.b64encode(buf.getvalue()).decode('utf-8')
-            return f'data:image/jpeg;base64,{encoded}'
+            path = f"/storage/heatmap_{image_uuid}.jpg"
+            out_img.save(path, format='JPEG')
+            return f"/storage/heatmap_{image_uuid}.jpg"
 
         except Exception as exc:
             print(f'Error overlaying heatmap: {exc}')
-            return f'data:image/jpeg;base64,{base64.b64encode(image_bytes).decode("utf-8")}'
+            return f"/storage/raw_{image_uuid}.jpg"
 
     # ── Main predict ───────────────────────────────────────────────────────
 
-    def predict(self, image_bytes: bytes) -> dict:
+    def predict_from_file(self, image_uuid: str) -> dict:
+        """
+        Run binary + multiclass inference reading from file system.
+        """
+        raw_path = f"/storage/raw_{image_uuid}.jpg"
+        with open(raw_path, "rb") as f:
+            image_bytes = f.read()
+        return self.predict(image_bytes, image_uuid)
+
+    def predict(self, image_bytes: bytes, image_uuid: str = "temp") -> dict:
         """
         Run binary + multiclass inference with Grad-CAM visualization.
 
         Returns:
             {
                 predictions: list[{name, percent, color}],  # sorted descending
-                heatmap_base64: str,                        # data URI
+                heatmap_base64: str,                        # data URI / file path
                 is_abnormal: bool,
+                raw_image: str,                             # path to raw image
             }
         """
         # Parse image
@@ -301,12 +310,19 @@ class XRayInferenceService:
             })
 
         predictions.sort(key=lambda x: x['percent'], reverse=True)
-        heatmap = self._generate_heatmap_overlay(image_bytes, cam_map)
+        heatmap = self._generate_heatmap_overlay(image_bytes, cam_map, image_uuid)
+
+        low_confidence = False
+        if is_abnormal and predictions:
+            if predictions[0]['percent'] < 50:
+                low_confidence = True
 
         return {
             'predictions': predictions[:5],
             'heatmap_base64': heatmap,
             'is_abnormal': is_abnormal,
+            'raw_image': f"/storage/raw_{image_uuid}.jpg",
+            'low_confidence': low_confidence,
         }
 
 

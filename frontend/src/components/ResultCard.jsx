@@ -14,6 +14,16 @@ export default function ResultCard({ predictionResult, patientData, onReset, onC
         <div className="result-card-container" style={{ padding: '24px', background: '#ffffff', borderRadius: 16, border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1e293b', marginBottom: 16 }}>Result</h2>
             
+            {predictionResult.low_confidence && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 16, background: '#fffbeb', border: '1px solid #fef3c7', borderRadius: 12, color: '#b45309', marginBottom: 24 }}>
+                    <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                    <div>
+                        <strong style={{ display: 'block', fontWeight: 700 }}>Low Classification Confidence</strong>
+                        <span style={{ fontSize: '0.85rem' }}>The model generated predictions with low probability threshold. Please consult with a radiologist to verify the findings.</span>
+                    </div>
+                </div>
+            )}
+
             <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#475569', marginBottom: 12 }}>AI Solution</h3>
             
             {/* The Text Box from Mockup */}

@@ -1,0 +1,32 @@
+{
+  "binary_classifier": {
+    "model_name": "DenseNet-121",
+    "weights_path": "backend/app/weights/Binary_Model.pth",
+    "metrics": {
+      "accuracy": 0.942,
+      "auc_roc": 0.965,
+      "sensitivity": 0.928,
+      "specificity": 0.954
+    },
+    "input_shape": [3, 224, 224],
+    "normalization": {
+      "mean": [0.485, 0.456, 0.406],
+      "std": [0.229, 0.224, 0.225]
+    }
+  },
+  "multiclass_classifier": {
+    "model_name": "EfficientNet-V2-S",
+    "weights_path": "backend/app/weights/MultiClass_Ensemple_Model.pt",
+    "metrics": {
+      "accuracy": 0.895,
+      "auc_roc": 0.912,
+      "mean_ap": 0.867
+    },
+    "labels": ["Atelectasis", "Cardiomegaly", "Emphysema", "Pneumonia", "Mass", "Pneumothorax"],
+    "input_shape": [3, 224, 224],
+    "normalization": {
+      "mean": [0.485, 0.456, 0.406],
+      "std": [0.229, 0.224, 0.225]
+    }
+  }
+}

@@ -31,8 +31,16 @@ export default function ReviewManagement() {
     const [editHover,   setEditHover]   = useState(0);
     const [editTarget,  setEditTarget]  = useState('General System');
 
-    const handleLogout = () => {
-        localStorage.removeItem('access_token');
+    const handleLogout = async () => {
+        const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+        try {
+            await fetch(`${API_BASE}/auth/logout`, {
+                method: 'POST',
+                credentials: 'include',
+            });
+        } catch (e) {
+            console.error('Error logging out:', e);
+        }
         localStorage.removeItem('doctor');
         navigate('/login');
     };
